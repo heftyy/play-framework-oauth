@@ -26,7 +26,7 @@ public class JwtTest extends GenericFakeAppTest {
                 client.getAccessorId(),
                 domain,
                 keyPath,
-                domain + "/oauth/ws/auth");
+                "/oauth/ws/auth");
 
         try {
             return clientApi.getAccessToken(scopeUrl);
@@ -41,9 +41,9 @@ public class JwtTest extends GenericFakeAppTest {
         PlayWSOAuthClient clientApi = new PlayWSOAuthClient(
                 client.getPassword(),
                 client.getAccessorId(),
+                domain,
                 null, // not needed
-                null, // not needed
-                domain + "/oauth/ws/auth");
+                "/oauth/ws/auth");
 
         try {
             return clientApi.authorizeWithToken(scopeUrl, token);

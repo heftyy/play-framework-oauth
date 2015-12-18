@@ -87,18 +87,18 @@ public class COAuth extends Controller {
                 return forbidden(INVALID);
             }
 
-            AccessTokenMessage result = accessorsService.createNewAccessor(
+            AccessToken token = accessorsService.createNewAccessor(
                     jwt.getClaim().getAccessorId(),
                     jwt.getClaim().getTime(),
                     jwt.getClaim().getScope(),
                     request().remoteAddress(),
                     jwt.getClaim().getDomain());
 
-            if (result == null) {
+            if (token == null) {
                 return forbidden(INVALID);
 
             } else {
-                return ok(result.getJson());
+                return ok(token.getMessage().getJson());
             }
         }
         return forbidden(INVALID);

@@ -1,6 +1,7 @@
 package oauth.accessor;
 
 import common.models.AbstractModel;
+import oauth.messages.AccessTokenMessage;
 
 public class AccessToken extends AbstractModel {
     protected String accessorId;
@@ -17,6 +18,10 @@ public class AccessToken extends AbstractModel {
         this.remoteAddress = remoteAddress;
         this.tokenExpiresAt = tokenExpiresAt;
         this.type = type;
+    }
+
+    public AccessTokenMessage getMessage() {
+        return new AccessTokenMessage(accessorId, type, tokenExpiresAt);
     }
 
     public String getAccessorId() {

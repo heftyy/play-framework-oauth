@@ -89,7 +89,7 @@ public class TokenService {
      * @return String: JSON.toString() that is going to be sent back to the
      * client.
      */
-    public AccessTokenMessage createNewAccessor(String accessorId, Long time, String scope,
+    public AccessToken createNewAccessor(String accessorId, Long time, String scope,
                                                 String remoteAddress, String domain) {
         if (accessorId == null || scope == null || remoteAddress == null ||
                 checkIfAccessorExists(accessorId, remoteAddress)) return null;
@@ -100,7 +100,7 @@ public class TokenService {
                 + TOKEN_VALID_FOR_SECONDS, 0);
         accessTokens.add(newAccessToken);
 
-        return new AccessTokenMessage(accessorId, 0, time + TOKEN_VALID_FOR_SECONDS);
+        return newAccessToken;
     }
 
     /**
