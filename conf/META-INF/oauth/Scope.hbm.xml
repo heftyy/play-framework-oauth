@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="oauth.models.OAuthScope" table="oauth_scopes" schema="oauth">
+		
+		<id name="id" type="long" column="id">
+			<generator class="identity" />
+		</id>
+
+		<property name="scopeUrl">
+			<column name="scope_url"/>
+		</property>
+
+		<property name="method">
+			<column name="method"/>
+		</property>
+		
+		<property name="returns">
+			<column name="returns"/>
+		</property>
+		
+		<property name="arguments">
+			<column name="arguments"/>
+		</property>
+		
+		<property name="levelName">
+			<column name="level"/>
+		</property>
+		
+		<property name="apiId">
+			<column name="api_id"/>
+		</property>
+		
+		<many-to-one name="level" class="oauth.models.OAuthLevel" not-null="true">
+			<column name="level_id"/>
+		</many-to-one>
+
+	</class>
+</hibernate-mapping>

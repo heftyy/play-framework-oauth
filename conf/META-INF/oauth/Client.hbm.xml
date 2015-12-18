@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="oauth.models.OAuthClient" table="oauth_clients" schema="oauth">
+		<id name="id" type="long" column="client_id">
+			<generator class="identity" />
+		</id>
+
+		<property name="name" column="name"/>
+
+		<property name="accessorId" column="accessor_id"/>
+
+		<property name="creationTime" column="creation_time" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"/>
+		
+		<property name="publicKey" column="public_key" length="2048"/>
+		
+		<property name="password" column="passwd"/>
+		
+		<set name="apis" table="oauth_client_api" cascade="all" schema="oauth">
+            <key column="client_id" not-null="true"/>
+            <many-to-many column="api_id" class="oauth.models.OAuthApi"/>
+        </set>
+        
+        <set name="levels" table="oauth_client_level" cascade="all" schema="oauth">
+            <key column="client_id" not-null="true"/>
+            <many-to-many class="oauth.models.OAuthLevel" column="level_id"/>
+        </set>
+	</class>
+</hibernate-mapping>

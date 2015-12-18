@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="oauth.models.OAuthLevel" table="oauth_levels" schema="oauth">
+
+        <id name="id" type="long" column="level_id">
+            <generator class="identity" />
+        </id>
+
+        <property name="name" column="name"/>
+
+		<property name="description" column="description"/>
+				
+		<property name="addTime" column="add_time" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"/>
+		
+		<property name="modTime" column="mod_time" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"/>
+		
+		<property name="updated" column="updated"/>
+
+		<many-to-one name="api" class="oauth.models.OAuthApi" insert="false" update="false">
+			<column name="api_id"/>
+		</many-to-one>
+
+		<set name="clients" table="oauth_client_level" schema="oauth">
+			<key column="level_id" not-null="true"/>
+			<many-to-many class="oauth.models.OAuthClient" column="client_id"/>
+		</set>
+
+        <set name="scopes" table="oauth_scopes" cascade="all" schema="oauth">
+            <key column="id"/>
+            <one-to-many class="oauth.models.OAuthScope"/>
+        </set>
+	</class>
+</hibernate-mapping>

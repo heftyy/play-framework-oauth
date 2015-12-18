@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<database>
+	<levels>
+		<level>
+			<name>test</name>
+			<desc>testing level</desc>
+			<scope>
+				<url>/test</url>
+				<desc>access to test url</desc>
+				<method>GET</method>
+				<returns>text</returns>
+			</scope>
+			<scope>
+				<url>/read/[\\d+]</url>
+				<desc>read one message pass id</desc>
+				<method>GET</method>
+				<returns>json</returns>
+			</scope>
+		</level>
+	</levels>
+</database>

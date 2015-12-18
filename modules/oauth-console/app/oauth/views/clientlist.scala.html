@@ -1,0 +1,71 @@
+@()
+
+<div id="client-list"></div>
+
+<div style="height: 0px; overflow: hidden">
+	<div id="oauth-scopes-window">
+		<form id="oauth-scopes-form">
+			<div id="oauth-scopes-treeview"> </div>
+		</form>
+		<a class="k-button k-button-icontext save-scopes" href="#">Save</a>
+		<a class="k-button k-button-icontext download-scopes" href="#">Download from webservice</a>
+	</div>
+</div>
+
+<script type="text/x-kendo-template" id="client-details-template">
+	<div class="tabstrip">
+		<ul>
+			<li class="k-state-active">Client information</li>
+			<li>Apis</li>
+		</ul>
+		<div>
+			<div class='client-details'>
+				<ul class="unstyled">
+					<li>
+						<label>UUID:</label> #= UUID #
+					</li>
+					<li>
+						<label>Key:</label> <a href="#=jsRoutes.oauth.COAuthConsole.downloadKey(UUID).url#">Download</a>
+					</li>
+					<li>
+						<label>Passowrd:</label> #= password #
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="fillall">
+			<div class="apis">
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/kendo-ui-template" id="scopes-template">
+    # if (!item.scopes) { #
+        #: item.scopeUrl #
+    # } else { #
+    	<input type="checkbox" name="levels[]" value="#: item.compositeId.level #" # if (item.userAllowed) { # checked="checked" # } #/>
+    	#: item.compositeId.level #
+	# } #
+</script>
+
+<style scoped="scoped">
+	.fillall {
+		padding: 0px !important;
+		margin: 0px !important;
+	}
+	
+	input[type="radio"], input[type="checkbox"] {
+		margin: 0px;
+	}
+	
+	form {
+		margin: 0 0 5px;
+	}
+
+	li label {
+		display: inline-block;
+	}
+</style>
+
+

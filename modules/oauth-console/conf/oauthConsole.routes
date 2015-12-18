@@ -1,0 +1,24 @@
+#                     __  .__
+#  _________   __ ___/  |_|  |__
+# /  _ \__  \ |  |  \   __\  |  \
+#(  <_> ) __ \|  |  /|  | |   Y  \
+# \____(____  /____/ |__| |___|  /
+#           \/                 \/
+
+GET         /index                          oauth.controllers.COAuthConsole.index()
+
+GET         /api/list                       oauth.controllers.COAuthApis.apiList()
+GET         /api/get                        oauth.controllers.COAuthApis.apis(json: String)
+GET         /api/update                     oauth.controllers.COAuthApis.updateApis(json: String)
+GET         /api/remove                     oauth.controllers.COAuthApis.removeApis(json: String)
+
+GET         /downloadkey                    oauth.controllers.COAuthClients.downloadKey(uuid: String)
+GET         /client/list                    oauth.controllers.COAuthClients.clientList()
+GET         /client/get                     oauth.controllers.COAuthClients.clients(json: String)
+GET         /client/update                  oauth.controllers.COAuthClients.updateClients(json: String)
+GET         /client/remove                  oauth.controllers.COAuthClients.removeClients(json: String)
+
+GET         /level/:apiId                   oauth.controllers.COAuthLevels.levelsForApi(apiId: Long)
+GET         /level/:apiId/:clientId         oauth.controllers.COAuthLevels.levelsForApiAndClient(apiId: Long, clientId: Long)
+GET         /level/update                   oauth.controllers.COAuthLevels.updateLevels(json: String)
+GET         /getscopes/:apiId               oauth.controllers.COAuthLevels.downloadScopes(apiId: Long)

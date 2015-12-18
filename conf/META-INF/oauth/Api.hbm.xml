@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="oauth.models.OAuthApi" table="oauth_apis" schema="oauth">
+		<id name="id" type="long" column="api_id">
+			<generator class="identity" />
+		</id>
+		
+		<property name="onGlobally">
+			<column name="on_boolean"/>
+		</property>
+		
+		<property name="name">
+			<column name="name"/>
+		</property>
+		
+		<property name="domain">
+			<column name="domain"/>
+		</property>
+		
+		<property name="scopeRequestUrl">
+			<column name="scope_request_url"/>
+		</property>
+		
+		<set name="clients" table="oauth_client_api" schema="oauth">
+            <key column="api_id" not-null="true"/>
+            <many-to-many column="client_id" class="oauth.models.OAuthClient"/>
+        </set>
+		
+        <set name="levels" table="oauth_levels" cascade="all" schema="oauth">
+            <key column="api_id" not-null="true"/>
+            <one-to-many class="oauth.models.OAuthLevel" />
+        </set>
+	</class>
+</hibernate-mapping>
