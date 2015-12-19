@@ -165,8 +165,10 @@ public class AccessorsContainerWithMD5 implements AccessorsContainer {
             return createNewAccessor(accessorId, accessToken, remoteAddress, domain, scope, userAgent);
         } else if (accessor.getAccessToken().equals(accessToken) &&
                 accessor.getRemoteAddress().equals(remoteAddress) &&
-                Arrays.equals(accessor.getRequestHash().digest(), md.digest())) { // accessor is in memory and is valid
-            if (scopesContainer.checkIfClientAllowed(accessor, scope)) return accessor;
+                Arrays.equals(accessor.getRequestHash().digest(), md.digest()) &&
+                scopesContainer.checkIfClientAllowed(accessor, scope)
+                ) { // accessor is in memory and is valid
+            return accessor;
         }
 
         return null;
