@@ -30,7 +30,7 @@ public class ApiTest extends GenericFakeAppTest {
         a.setOnGlobally(true);
         a.setScopeRequestUrl("/oauth/ws/scopes");
 
-        OAuthLevel l = new OAuthLevel("ALL", "all scopes", a);
+        OAuthLevel l = new OAuthLevel("test", "test scopes", a);
         OAuthScope s = new OAuthScope("*", "GET", "json", "", l);
         l.setScopes(Sets.newHashSet(s));
         a.setLevels(Sets.newHashSet(l));

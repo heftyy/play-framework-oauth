@@ -39,16 +39,16 @@ public class COAuthApis extends Controller {
 
     @Transactional
     public Result apis(String json) {
-        JsonNode jn = Json.parse(json);
-        int clientId = jn.findPath("clientId").asInt(0);
-        List<OAuthApi> l;
-        if (clientId == 0) {
-            l = apiRepository.findAll();
+        if (json == null) {
+            return ok(Json.toJson(apiRepository.findAll()));
         } else {
-            l = apiRepository.findWithRestrictions(
-                    Lists.newArrayList(Restrictions.eq("client.id", clientId)),
-                    "clients");
+            JsonNode jn = Json.parse(json);
+            Integer clientId = jn.get("clientId").asInt(0);
+            return ok(Json.toJson(
+                    apiRepository.findWithRestrictions(
+                            Lists.newArrayList(Restrictions.eq("client.id", clientId)),
+                            "clients")
+            ));
         }
-        return ok(Json.toJson(l));
     }
 }

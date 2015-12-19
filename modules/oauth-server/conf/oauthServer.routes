@@ -1,2 +1,4 @@
 POST        /token/request                   oauth.controllers.COAuth.requestToken()
 POST        /token/validate                  oauth.controllers.COAuth.validateToken()
+
+GET         /log/get                         oauth.controllers.CLog.get()

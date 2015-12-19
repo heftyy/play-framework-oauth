@@ -3,7 +3,9 @@ package security;
 import be.objectify.deadbolt.core.models.Subject;
 import be.objectify.deadbolt.java.AbstractDeadboltHandler;
 import be.objectify.deadbolt.java.DynamicResourceHandler;
+import oauth.webservice.AccessorsContainerWithMD5;
 import oauth.webservice.AccessorsContainer;
+import oauth.webservice.ValidAccessor;
 import play.libs.F;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -29,13 +31,18 @@ public class OAuthHandler extends AbstractDeadboltHandler {
     }
 
     public F.Promise<Optional<Subject>> getSubject(final Http.Context context) {
-        String accessorId = context.request().headers().get("ACCESSOR-ID")[0];
+        String[] accessorIdHeader = context.request().headers().get("ACCESSOR-ID");
+        if(accessorIdHeader == null || accessorIdHeader.length == 0) return F.Promise.promise(Optional::empty);
+
+        String accessorId = accessorIdHeader[0];
         String userAgent = context.request().headers().get("User-Agent")[0];
         String ip = context.request().remoteAddress();
 
-        MessageDigest md = AccessorsContainer.createMD5Hash(accessorId, ip, userAgent);
+        MessageDigest md = AccessorsContainerWithMD5.createMD5Hash(accessorId, ip, userAgent);
 
-        return F.Promise.promise(() -> Optional.ofNullable(accessorsContainer.findAccessor(accessorId, md)));
+        ValidAccessor accessor = accessorsContainer.findAccessor(accessorId, md.digest());
+
+        return F.Promise.promise(() -> Optional.ofNullable(accessor));
     }
 
     public F.Promise<Optional<DynamicResourceHandler>> getDynamicResourceHandler(final Http.Context context) {

@@ -21,7 +21,7 @@ public class AccessToken extends AbstractModel {
     }
 
     public AccessTokenMessage getMessage() {
-        return new AccessTokenMessage(accessorId, type, tokenExpiresAt);
+        return new AccessTokenMessage(accessorId, accessToken, type, tokenExpiresAt);
     }
 
     public String getAccessorId() {

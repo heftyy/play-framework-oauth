@@ -3,17 +3,17 @@ package oauth.webservice;
 import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;
+import common.models.AbstractModel;
 
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ValidAccessor implements Subject {
+public class ValidAccessor extends AbstractModel implements Subject {
 
     protected String accessorId;
     protected String accessToken;
     protected String remoteAddress;
-    protected byte[] requestHashBytes;
     protected Long tokenExpiresAt;
     protected List<SecurityRole> allowedLevels;
     protected MessageDigest requestHash;
@@ -73,14 +73,6 @@ public class ValidAccessor implements Subject {
 
     public void setRemoteAddress(String remoteAddress) {
         this.remoteAddress = remoteAddress;
-    }
-
-    public byte[] getRequestHashBytes() {
-        return requestHashBytes;
-    }
-
-    public void setRequestHashBytes(byte[] requestHashBytes) {
-        this.requestHashBytes = requestHashBytes;
     }
 
     public Long getTokenExpiresAt() {

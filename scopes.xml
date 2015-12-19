@@ -12,8 +12,8 @@
 				<returns>text</returns>
 			</scope>
 			<scope>
-				<url>/read/[\\d+]</url>
-				<desc>read one message pass id</desc>
+				<url>/oauth/ws/data</url>
+				<desc>read webservice data</desc>
 				<method>GET</method>
 				<returns>json</returns>
 			</scope>

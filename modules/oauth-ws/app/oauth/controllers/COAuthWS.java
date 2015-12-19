@@ -2,9 +2,12 @@ package oauth.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import oauth.messages.WebServiceAuthorize;
+import oauth.services.LoggingService;
 import oauth.webservice.AccessorsContainer;
+import oauth.webservice.ValidAccessor;
 import oauth.webservice.scopes.ScopesContainer;
 import play.Configuration;
+import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -22,11 +25,15 @@ public class COAuthWS extends Controller {
 
     private final ScopesContainer scopesContainer;
     private final AccessorsContainer accessorsContainer;
+    private final LoggingService loggingService;
 
     @Inject
-    public COAuthWS(AccessorsContainer accessorsContainer, ScopesContainer scopesContainer) {
+    public COAuthWS(AccessorsContainer accessorsContainer,
+                    ScopesContainer scopesContainer,
+                    LoggingService loggingService) {
         this.accessorsContainer = accessorsContainer;
         this.scopesContainer = scopesContainer;
+        this.loggingService = loggingService;
     }
 
     /**
@@ -38,40 +45,41 @@ public class COAuthWS extends Controller {
      * @return String: 'valid' / 'invalid' or bad request if the JSON received
      * is incomplete.
      */
+    @Transactional
     public Result authorize() {
+        JsonNode json = request().body().asJson();
 
+        WebServiceAuthorize authorize = Json.fromJson(json, WebServiceAuthorize.class);
+
+        loggingService.saveLog("client authorizing on web service", authorize);
+
+        if (authorize.getAccessorId() == null || authorize.getAccessToken() == null || authorize.getScope() == null) {
+            return badRequest("Json is incomplete.");
+        }
+
+        String userAgent = null, ip = null;
         try {
-            JsonNode json = request().body().asJson();
-
-            WebServiceAuthorize authorize = Json.fromJson(json, WebServiceAuthorize.class);
-
-            if (authorize.getAccessorId() == null || authorize.getAccessToken() == null || authorize.getScope() == null) {
-                return badRequest("Json is incomplete.");
-            }
-
-            String userAgent = null, ip = null;
-            try {
-                userAgent = request().headers().get("User-Agent")[0];
+            userAgent = request().headers().get("User-Agent")[0];
 //                  ip = request().remoteAddress();
 //					System.out.println(userAgent);
 //					System.out.println(ip);
-            } catch (NullPointerException e) {
-                return badRequest("Bad request\r\n");
-            }
-
-            if (accessorsContainer.validateAccessor(
-                    authorize.getAccessorId(),
-                    authorize.getAccessToken(),
-                    authorize.getScope(),
-                    request().remoteAddress(),
-                    DOMAIN,
-                    userAgent
-            )) return ok(VALID);
-            else return ok(INVALID);
-
-        } catch (Exception e) {
-            return badRequest("not a json, go away");
+        } catch (NullPointerException e) {
+            return badRequest("Bad request\r\n");
         }
+
+        ValidAccessor accessor = accessorsContainer.validateAccessor(
+                authorize.getAccessorId(),
+                authorize.getAccessToken(),
+                authorize.getScope(),
+                request().remoteAddress(),
+                DOMAIN,
+                userAgent
+        );
+
+        loggingService.saveLog("created accessor on web service", accessor);
+
+        if(accessor == null) return badRequest(INVALID);
+        else return ok(VALID);
     }
 
     /**

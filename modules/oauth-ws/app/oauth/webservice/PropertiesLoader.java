@@ -26,9 +26,7 @@ public class PropertiesLoader {
      */
     @SuppressWarnings("unchecked")
     public boolean loadXMLProperties(String fileName) {
-
         try {
-
             XMLConfiguration config = new XMLConfiguration(fileName);
 
             int i = 0;
@@ -85,8 +83,7 @@ public class PropertiesLoader {
             scopesContainer.addScope("ALL", "/*", "*", "*", "*");
             scopesContainer.setScopesLoaded(false);
 
-            System.err.println("Couldn't load the config xml");
-            e.printStackTrace();
+            play.Logger.error("Couldn't load the config xml");
             return false;
         }
         return true;

@@ -8,6 +8,7 @@ libraryDependencies ++= Seq(
   javaWs,
   javaCore,
   "be.objectify" %% "deadbolt-java" % "2.4.3",
+  "commons-collections" % "commons-collections" % "3.2.1",
   "commons-configuration" % "commons-configuration" % "1.10"
 )
 

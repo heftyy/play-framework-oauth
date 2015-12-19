@@ -12,8 +12,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ScopesService {
-    private JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
-
     private final Repository<OAuthScope> scopeRepository;
 
     @Inject

@@ -3,24 +3,20 @@ package oauth.services;
 import com.google.common.collect.Lists;
 import common.repository.Repository;
 import oauth.accessor.AccessToken;
-import oauth.messages.AccessTokenMessage;
 import oauth.models.OAuthScope;
 import oauth.utils.ScopesStringCompare;
 import org.hibernate.criterion.Restrictions;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Singleton
 public class TokenService {
 
-    private static int TOKEN_VALID_FOR_SECONDS = 1800; // in seconds
+    private static int TOKEN_VALID_FOR_MILLISECONDS = 15 * 60 * 1000; // in milliseconds ( 15 minutes )
 
-    private List<AccessToken> accessTokens = new ArrayList<>();
+    private Map<String, AccessToken> accessTokens = new HashMap<>();
     private Repository<OAuthScope> scopeRepository;
 
     @Inject
@@ -35,16 +31,13 @@ public class TokenService {
      * @param remoteAddress String: Client's IP.
      * @return Boolean: True if found, false if not.
      */
-    private boolean checkIfAccessorExists(String accessorId,
-                                          String remoteAddress) {
-        for (AccessToken accessToken : accessTokens) {
-            if (accessToken.getTokenExpiresAt() > System.currentTimeMillis() / 1000
-                    && accessToken.getAccessorId().compareTo(accessorId) == 0
-                    && accessToken.getRemoteAddress().compareTo(remoteAddress) == 0) {
-                return true;
-            }
-        }
-        return false;
+    private boolean checkAccessTokenExists(String accessorId,
+                                           String remoteAddress) {
+        AccessToken accessToken = accessTokens.get(accessorId);
+
+        return accessToken != null &&
+                accessToken.getTokenExpiresAt() > System.currentTimeMillis() &&
+                accessToken.getRemoteAddress().equals(remoteAddress);
     }
 
     /**
@@ -56,7 +49,7 @@ public class TokenService {
      * @param scopeRequested String: scopeRequested asked for.
      * @return Boolean: True if request is valid, false if not.
      */
-    public boolean validateRequest(String accessorId, String domain, String scopeRequested) {
+    public boolean validateScopeRequest(String accessorId, String domain, String scopeRequested) {
 
         List<OAuthScope> scopes = scopeRepository.findWithRestrictions(Lists.newArrayList(
                 Restrictions.eq("clients.accessorId", accessorId),
@@ -92,13 +85,14 @@ public class TokenService {
     public AccessToken createNewAccessor(String accessorId, Long time, String scope,
                                                 String remoteAddress, String domain) {
         if (accessorId == null || scope == null || remoteAddress == null ||
-                checkIfAccessorExists(accessorId, remoteAddress)) return null;
+                checkAccessTokenExists(accessorId, remoteAddress)) return null;
 
         UUID accessToken = UUID.randomUUID();
         AccessToken newAccessToken = new AccessToken(accessorId,
                 accessToken.toString(), scope, remoteAddress, time
-                + TOKEN_VALID_FOR_SECONDS, 0);
-        accessTokens.add(newAccessToken);
+                + TOKEN_VALID_FOR_MILLISECONDS, 0);
+
+        accessTokens.put(accessorId, newAccessToken);
 
         return newAccessToken;
     }
@@ -109,39 +103,22 @@ public class TokenService {
      * client can send a request to oauth and it saves client's outside IP and
      * webservice may get a local IP for a example.
      *
-     * @param accessorId    String: Client's UUID.
-     * @param accessToken   String: Access token.
+     * @param accessorId String: Client's accessorId.
+     * @param token String: Access token.
+     * @param scope String: scope.
      * @param remoteAddress String: Client's IP.
      * @return ValidAccessor: If the method finds a valid access token returns it otherwise null.
      */
-    public AccessToken validateAccessToken(String accessorId, String accessToken, String remoteAddress) {
-        for (AccessToken accessor : accessTokens) {
-            if (accessor.getTokenExpiresAt() > System.currentTimeMillis() / 1000
-                    && accessor.getAccessorId().compareTo(accessorId) == 0
-                    && accessor.getAccessToken().compareTo(accessToken) == 0) {
-                // && accessor.getRemoteAddress().compareTo(remoteAddress) == 0)
-                // {
-                return accessor;
-            }
-        }
+    public AccessToken validateAccessToken(String accessorId, String token, String scope, String remoteAddress) {
+        AccessToken accessToken = accessTokens.get(accessorId);
+
+        if(accessToken != null &&
+                accessToken.getTokenExpiresAt() > System.currentTimeMillis() &&
+                accessToken.getAccessToken().equals(token) &&
+//                accessToken.getRemoteAddress().equals(remoteAddress) &&
+                accessToken.getScope().equals(scope))
+            return accessToken;
 
         return null;
-    }
-
-    /**
-     * NOT USED Removing old access token with access tokens. Called by akka actor.
-     */
-    public void invalidateExpiredKeys() {
-        int currentTime = (int) (System.currentTimeMillis() / 1000);
-        System.out.println("listing " + Integer.toString(currentTime));
-        for (Iterator<AccessToken> iter = accessTokens.iterator(); iter
-                .hasNext(); ) {
-            AccessToken accessToken = iter.next();
-            if (accessToken.getTokenExpiresAt() <= currentTime) {
-                iter.remove();
-            } else
-                System.out.println("id " + accessToken.getAccessorId() + " token "
-                        + accessToken.getAccessToken() + " " + accessToken.getTokenExpiresAt());
-        }
     }
 }

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class ScopesContainerImpl implements ScopesContainer {
-    private List<Level> levels;
+    private List<Level> levels = new ArrayList<>();
     private boolean scopesLoaded = false;
 
     @Override

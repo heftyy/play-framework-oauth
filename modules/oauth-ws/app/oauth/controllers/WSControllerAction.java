@@ -1,5 +1,6 @@
 package oauth.controllers;
 
+import oauth.webservice.AccessorsContainerWithMD5;
 import oauth.webservice.AccessorsContainer;
 import oauth.webservice.scopes.ScopesContainer;
 import play.mvc.Action;
@@ -46,7 +47,7 @@ public class WSControllerAction extends Action<WSController> {
                 ip = ctx.request().remoteAddress();
 
                 if (accessorId != null && userAgent != null && ip != null) {
-                    md = AccessorsContainer.createMD5Hash(accessorId, ip, userAgent);
+                    md = AccessorsContainerWithMD5.createMD5Hash(accessorId, ip, userAgent);
                 }
 
 
@@ -54,7 +55,7 @@ public class WSControllerAction extends Action<WSController> {
                 System.err.println("Not a valid request, missing some headers");
             }
 
-            if (accessorsContainer.findAccessor(accessorId, md) == null) {
+            if (accessorsContainer.findAccessor(accessorId, md.digest()) == null) {
                 System.err.println("Didn't authorize the request");
             }
 

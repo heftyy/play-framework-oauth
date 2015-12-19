@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import oauth.accessor.AccessToken;
 import oauth.jwt.JsonWebToken;
 import oauth.messages.RequestToken;
-import oauth.messages.AccessTokenMessage;
 import oauth.messages.WebServiceValidateRequest;
 import oauth.messages.WebServiceValidateResponse;
 import oauth.services.JwtService;
+import oauth.services.LoggingService;
 import oauth.services.ScopesService;
 import oauth.services.TokenService;
 import play.db.jpa.Transactional;
@@ -25,32 +25,34 @@ import java.security.spec.InvalidKeySpecException;
 
 @BodyParser.Of(BodyParser.Json.class)
 public class COAuth extends Controller {
-
     public static final String INVALID = "invalid";
     public static final String VALID = "valid";
 
     private final TokenService accessorsService;
     private final ScopesService scopesService;
     private final JwtService jwtService;
+    private final LoggingService loggingService;
 
     @Inject
-    public COAuth(TokenService accessorsService, ScopesService scopesService, JwtService jwtService) {
+    public COAuth(TokenService accessorsService,
+                  ScopesService scopesService,
+                  JwtService jwtService,
+                  LoggingService loggingService) {
         this.accessorsService = accessorsService;
         this.scopesService = scopesService;
         this.jwtService = jwtService;
+        this.loggingService = loggingService;
     }
-
-    /*
-     * example JSON received
-	 * {
-	 * 	"request_token":"base64safeStringEncoded"
-	 * }
-	 */
 
     /**
      * Method for requesting access tokens, checks if the data sent by client is OK.
      *
      * @return String: JSON with access token / 'invalid' / bad request if data is missing in the HTTP request.
+     *
+     * example JSON received
+     * {
+     * 	"requestToken":"base64safeStringEncoded"
+     * }
      */
     @Transactional
     public Result requestToken() {
@@ -60,6 +62,8 @@ public class COAuth extends Controller {
         RequestToken requestToken = Json.fromJson(json, RequestToken.class);
         if(requestToken == null || requestToken.getAssertion() == null) return badRequest("Missing parameter");
 
+        loggingService.saveLog("requesting token", requestToken);
+
         /**
          * Validating received data. Checking if data+signature created using secret key (.p12) is OK.
          */
@@ -67,6 +71,7 @@ public class COAuth extends Controller {
         JsonWebToken jwt = null;
         try {
             jwt = jwtService.getWebToken(requestToken.getAssertion());
+            loggingService.saveLog("received jwt", jwt);
         } catch (UnsupportedEncodingException e) {
             return internalServerError(e.getMessage());
         }
@@ -83,7 +88,7 @@ public class COAuth extends Controller {
             /**
              * Validating scopes.
              */
-            if (!accessorsService.validateRequest(jwt.getClaim().getAccessorId(), jwt.getClaim().getDomain(), jwt.getClaim().getScope())) {
+            if (!accessorsService.validateScopeRequest(jwt.getClaim().getAccessorId(), jwt.getClaim().getDomain(), jwt.getClaim().getScope())) {
                 return forbidden(INVALID);
             }
 
@@ -96,76 +101,77 @@ public class COAuth extends Controller {
 
             if (token == null) {
                 return forbidden(INVALID);
-
             } else {
+                loggingService.saveLog("token generated for " + jwt.getClaim().getAccessorId(), token.getMessage());
                 return ok(token.getMessage().getJson());
             }
         }
         return forbidden(INVALID);
     }
 
-	/*
-     * example JSON sent by the web service
-	 * {
-	 * 	"accessor_id":"32-hex-long-string",
-	 * 	"access_token":"32-hex-long-string",
-	 * 	"remote_address_of_user":"xxx.xxx.xxx.xxx",
-	 * 	"scope_asked_for":"/url",
-	 * 	"domain":"localhost:9000"
-	 * }
-	 */
-	/*
-	 * example JSON to be returned to the web service
-	 * {
-	 * 	"token_valid":"true",
-	 * 	"accessor_id":"32-hex-long-string",
-	 * 	"access_token":"32-hex-long-string",
-	 * 	"remote_address_of_user":"xxx.xxx.xxx.xxx",
-	 * 	"scope_allowed_to":["/url", ...]
-	 * 	"expires_at":"long"
-	 * }
-	 * or 
-	 * {
-	 * 	"token_valid":"false"
-	 * }
-	 */
-
     /**
-     * Method for webservices to validate if the user trying to access content on the WS
+     * Method for web services to validate if the user trying to access content on the WS
      * has been granted an access token and is valid.
      *
-     * @return String: 'valid' / 'invalid' / bad request if data is missing in the HTTP request.
+     * example JSON sent by the web service
+     * {
+     * 	"accessorId":"32-hex-long-string",
+     * 	"accessToken":"32-hex-long-string",
+     * 	"clientRemoteAddress":"xxx.xxx.xxx.xxx",
+     * 	"requestedScope":"/url",
+     * 	"domain":"localhost:9000"
+     * }
+     *
+     * example JSON to be returned to the web service
+     * {
+     * 	"tokenValid":"true",
+     * 	"accessorId":"32-hex-long-string",
+     * 	"accessToken":"32-hex-long-string",
+     * 	"clientRemoteAddress":"xxx.xxx.xxx.xxx",
+     * 	"allowedScopes":["/url", ...]
+     * 	"expiresAt":"long"
+     * }
+     * or
+     * {
+     * 	"tokenValid":"false"
+     * }
      */
     @Transactional
     public Result validateToken() {
         JsonNode json = request().body().asJson();
-        WebServiceValidateRequest webServiceValidateRequest = Json.fromJson(json, WebServiceValidateRequest.class);
+        WebServiceValidateRequest validateRequest = Json.fromJson(json, WebServiceValidateRequest.class);
 
-        if (webServiceValidateRequest == null ||
-                webServiceValidateRequest.getAccessorId() == null ||
-                webServiceValidateRequest.getAccessToken() == null ||
-                webServiceValidateRequest.getClientRemoteAddress() == null ||
-                webServiceValidateRequest.getRequestedScope() == null) {
+        loggingService.saveLog("webservice requesting validation of token", validateRequest);
+
+        if (validateRequest == null ||
+                validateRequest.getAccessorId() == null ||
+                validateRequest.getAccessToken() == null ||
+                validateRequest.getClientRemoteAddress() == null ||
+                validateRequest.getRequestedScope() == null) {
             return badRequest("Missing parameter");
         } else {
-            AccessToken accessor = accessorsService.validateAccessToken(
-                    webServiceValidateRequest.getAccessorId(),
-                    webServiceValidateRequest.getAccessToken(),
-                    webServiceValidateRequest.getClientRemoteAddress()
+            AccessToken accessToken = accessorsService.validateAccessToken(
+                    validateRequest.getAccessorId(),
+                    validateRequest.getAccessToken(),
+                    validateRequest.getRequestedScope(),
+                    validateRequest.getClientRemoteAddress()
             );
 
+            loggingService.saveLog("created access token on oauth server", accessToken);
 
-            if (accessor != null) {
+            if (accessToken != null) {
                 WebServiceValidateResponse response = new WebServiceValidateResponse(
                         true,
-                        accessor.getAccessorId(),
-                        accessor.getAccessToken(),
-                        accessor.getRemoteAddress(),
+                        accessToken.getAccessorId(),
+                        accessToken.getAccessToken(),
+                        accessToken.getRemoteAddress(),
                         scopesService.getLevelsFor(
-                                webServiceValidateRequest.getAccessorId(),
-                                webServiceValidateRequest.getDomain()),
-                        accessor.getTokenExpiresAt()
+                                validateRequest.getAccessorId(),
+                                validateRequest.getDomain()),
+                        accessToken.getTokenExpiresAt()
                 );
+
+                loggingService.saveLog("webservice access token response", response);
 
                 return ok(response.getJson());
             } else {

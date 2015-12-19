@@ -1,2 +1,4 @@
 GET         /scopes                 oauth.controllers.COAuthWS.scopes()
 POST        /auth                   oauth.controllers.COAuthWS.authorize()
+
+GET         /data                   oauth.controllers.CData.data()

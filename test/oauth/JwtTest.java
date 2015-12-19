@@ -7,6 +7,10 @@ import oauth.models.OAuthClient;
 import org.junit.Test;
 import play.Play;
 import play.db.jpa.JPA;
+import play.libs.F;
+import play.libs.ws.WS;
+import play.libs.ws.WSResponse;
+import play.mvc.Http;
 import test.GenericFakeAppTest;
 
 import java.io.IOException;
@@ -63,7 +67,7 @@ public class JwtTest extends GenericFakeAppTest {
 
             JPA.withTransaction(() -> {
                 OAuthClient client = testServices.clientRepository.findByField("id", 1L, "apis", "levels", "levels.scopes");
-                AccessTokenMessage token = getAccessToken(client, domain, "ALL", testServices.generateKeyService.getSecretKeyPath(client.getAccessorId()));
+                AccessTokenMessage token = getAccessToken(client, domain, "/oauth/ws/data", testServices.generateKeyService.getSecretKeyPath(client.getAccessorId()));
                 assertNotNull(token);
                 assertNotNull(token.getAccessToken());
                 assertNotNull(token.getTokenType());
@@ -83,8 +87,14 @@ public class JwtTest extends GenericFakeAppTest {
 
             JPA.withTransaction(() -> {
                 OAuthClient client = testServices.clientRepository.findByField("id", 1L, "apis", "levels", "levels.scopes");
-                AccessTokenMessage token = getAccessToken(client, domain, "ALL", testServices.generateKeyService.getSecretKeyPath(client.getAccessorId()));
-                assertTrue(authorizeWithToken(client, domain, "ALL", token));
+                AccessTokenMessage token = getAccessToken(client, domain, "/oauth/ws/data", testServices.generateKeyService.getSecretKeyPath(client.getAccessorId()));
+                assertTrue(authorizeWithToken(client, domain, "/oauth/ws/data", token));
+
+                F.Promise<WSResponse> ret = WS.url("http://localhost:9000/oauth/ws/data").setHeader("Content-type", "application/json").setHeader("ACCESSOR-ID", client.getAccessorId()).get();
+                WSResponse response = ret.get(1000);
+
+                assertTrue(response.getStatus() == Http.Status.OK);
+                assertTrue(response.getBody().contains("ws_data"));
             });
         });
     }
