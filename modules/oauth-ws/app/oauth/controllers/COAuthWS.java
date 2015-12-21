@@ -3,8 +3,8 @@ package oauth.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import oauth.messages.WebServiceAuthorize;
 import oauth.services.LoggingService;
-import oauth.webservice.AccessorsContainer;
-import oauth.webservice.ValidAccessor;
+import oauth.webservice.AccessorsService;
+import oauth.webservice.Accessor;
 import oauth.webservice.scopes.ScopesContainer;
 import play.Configuration;
 import play.db.jpa.Transactional;
@@ -15,23 +15,18 @@ import play.mvc.Result;
 import javax.inject.Inject;
 
 public class COAuthWS extends Controller {
-
-    private static Configuration oauth = play.Configuration.root().getConfig("oauth-ws");
-    public static String DOMAIN = oauth.getString("domain");
-    public static String VALIDATE = oauth.getString("validate");
-
     private static final String VALID = "valid";
     private static final String INVALID = "invalid";
 
     private final ScopesContainer scopesContainer;
-    private final AccessorsContainer accessorsContainer;
+    private final AccessorsService accessorsService;
     private final LoggingService loggingService;
 
     @Inject
-    public COAuthWS(AccessorsContainer accessorsContainer,
+    public COAuthWS(AccessorsService accessorsService,
                     ScopesContainer scopesContainer,
                     LoggingService loggingService) {
-        this.accessorsContainer = accessorsContainer;
+        this.accessorsService = accessorsService;
         this.scopesContainer = scopesContainer;
         this.loggingService = loggingService;
     }
@@ -45,6 +40,8 @@ public class COAuthWS extends Controller {
      * @return String: 'valid' / 'invalid' or bad request if the JSON received
      * is incomplete.
      */
+
+    @Deprecated
     @Transactional
     public Result authorize() {
         JsonNode json = request().body().asJson();
@@ -67,19 +64,18 @@ public class COAuthWS extends Controller {
             return badRequest("Bad request\r\n");
         }
 
-        ValidAccessor accessor = accessorsContainer.validateAccessor(
-                authorize.getAccessorId(),
+        Accessor accessor = accessorsService.validateToken(
                 authorize.getAccessToken(),
-                authorize.getScope(),
-                request().remoteAddress(),
-                DOMAIN,
-                userAgent
+                authorize.getScope()
         );
 
-        loggingService.saveLog("created accessor on web service", accessor);
-
-        if(accessor == null) return badRequest(INVALID);
-        else return ok(VALID);
+        if(accessor != null) {
+            loggingService.saveLog("created accessor on web service", accessor);
+            return ok(VALID);
+        } else {
+            loggingService.saveLog("creating accessor on web service failed", Json.newObject());
+            return badRequest(INVALID);
+        }
     }
 
     /**

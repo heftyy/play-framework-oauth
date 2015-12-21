@@ -6,24 +6,20 @@ public class WebServiceValidateResponse extends BaseMessage {
     private boolean tokenValid;
     private String accessorId;
     private String accessToken;
-    private String clientRemoteAddress;
     private Set<String> allowedLevels;
-    private Long expiresAt;
 
     public WebServiceValidateResponse() {
     }
 
-    public WebServiceValidateResponse(boolean tokenValid, String accessorId, String accessToken, String clientRemoteAddress, Set<String> allowedLevels, Long expiresAt) {
+    public WebServiceValidateResponse(boolean tokenValid) {
+        this.tokenValid = tokenValid;
+    }
+
+    public WebServiceValidateResponse(boolean tokenValid, String accessorId, String accessToken, Set<String> allowedLevels) {
         this.tokenValid = tokenValid;
         this.accessorId = accessorId;
         this.accessToken = accessToken;
-        this.clientRemoteAddress = clientRemoteAddress;
         this.allowedLevels = allowedLevels;
-        this.expiresAt = expiresAt;
-    }
-
-    public WebServiceValidateResponse(boolean tokenValid) {
-        this.tokenValid = tokenValid;
     }
 
     public boolean isTokenValid() {
@@ -38,15 +34,7 @@ public class WebServiceValidateResponse extends BaseMessage {
         return accessToken;
     }
 
-    public String getClientRemoteAddress() {
-        return clientRemoteAddress;
-    }
-
     public Set<String> getAllowedLevels() {
         return allowedLevels;
-    }
-
-    public Long getExpiresAt() {
-        return expiresAt;
     }
 }

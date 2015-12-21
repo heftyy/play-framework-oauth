@@ -1,7 +1,5 @@
 import common.json.JsonSetup;
-import oauth.services.ScopesService;
-import oauth.utils.ScopesStringCompare;
-import oauth.webservice.PropertiesLoader;
+import oauth.webservice.scopes.ScopesXmlLoader;
 import play.Application;
 import play.GlobalSettings;
 import play.Play;
@@ -19,8 +17,8 @@ public class Global extends GlobalSettings {
     public void onStart(final Application app) {
         super.onStart(app);
         JsonSetup.setup();
-        PropertiesLoader propertiesLoader = Play.application().injector().instanceOf(PropertiesLoader.class);
-        propertiesLoader.loadXMLProperties("scopes.xml");
+        ScopesXmlLoader scopesXmlLoader = Play.application().injector().instanceOf(ScopesXmlLoader.class);
+        scopesXmlLoader.loadXMLProperties("scopes.xml");
     }
 
     /**

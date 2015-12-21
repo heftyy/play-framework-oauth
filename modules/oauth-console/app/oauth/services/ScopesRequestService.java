@@ -11,6 +11,7 @@ import play.libs.F;
 import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
+import play.mvc.Http;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,15 +46,14 @@ public class ScopesRequestService {
             url = "http://" + url;
         }
         try {
-            F.Promise<WSResponse> jpromise = WS.url(url).get();
-            String body = jpromise.get(1000).getBody();
-            if (jpromise.get(1000).getStatus() != 200) {
+            F.Promise<WSResponse> promise = WS.url(url).get();
+            WSResponse response = promise.get(1000);
+            if (response.getStatus() != Http.Status.OK) {
                 OAuthLevel l = insertDefaultLevel(apiId);
                 return l.getJson();
             }
-            JsonNode jsonObject = Json.parse(body);
-            parseJson(jsonObject, apiId);
-            return jsonObject;
+            JsonNode jsonObject = response.asJson();
+            return levelRepository.updateFromJson(jsonObject);
         } catch (Exception e) {
             play.Logger.error("Connection refused to: " + url);
             insertDefaultLevel(apiId);
@@ -85,7 +85,7 @@ public class ScopesRequestService {
      * @param jsonObject JsonNode: JSON from webservice.
      * @param apiId      int: Api(webservice) id in the database
      */
-    public void parseJson(JsonNode jsonObject, Long apiId) {
+    public void saveScopes(JsonNode jsonObject, Long apiId) {
         levelRepository.updateFromJson(jsonObject);
         /*
         for (Iterator<String> iterLevels = jsonObject.fieldNames(); iterLevels.hasNext(); ) {

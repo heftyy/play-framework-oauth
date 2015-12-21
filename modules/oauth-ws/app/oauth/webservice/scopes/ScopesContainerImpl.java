@@ -1,7 +1,7 @@
 package oauth.webservice.scopes;
 
 import oauth.utils.ScopesStringCompare;
-import oauth.webservice.ValidAccessor;
+import oauth.webservice.Accessor;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class ScopesContainerImpl implements ScopesContainer {
     private boolean scopesLoaded = false;
 
     @Override
-    public boolean checkIfClientAllowed(ValidAccessor accessor, String scope) {
+    public boolean checkIfClientAllowed(Accessor accessor, String scope) {
         List<String> levelsAllowed = accessor.getAllowedLevels();
         List<String> webserviceLevels = findLevelsForScope(scope);
 

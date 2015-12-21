@@ -1,6 +1,5 @@
 package oauth.services;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.google.common.collect.Lists;
 import common.repository.Repository;
 import oauth.models.OAuthScope;
@@ -34,5 +33,14 @@ public class ScopesService {
         ), "level", "level.api", "level.clients");
 
         return scopes.stream().map(scope -> scope.getLevel().getName()).collect(Collectors.toSet());
+    }
+
+    public Set<String> getScopesFor(String accessorId, String domain) {
+        List<OAuthScope> scopes = scopeRepository.findWithRestrictions(Lists.newArrayList(
+                Restrictions.eq("clients.accessorId", accessorId),
+                Restrictions.eq("api.domain", domain)
+        ), "level", "level.api", "level.clients");
+
+        return scopes.stream().map(OAuthScope::getScopeUrl).collect(Collectors.toSet());
     }
 }

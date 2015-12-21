@@ -2,26 +2,25 @@ package oauth.accessor;
 
 import common.models.AbstractModel;
 import oauth.messages.AccessTokenMessage;
+import oauth.models.OAuthApi;
 
 public class AccessToken extends AbstractModel {
-    protected String accessorId;
-    protected String accessToken;
-    protected String scope;
-    protected String remoteAddress;
-    protected Long tokenExpiresAt;
-    protected Integer type;
+    private String accessorId;
+    private String token;
+    private Long expiresAt;
+    private String type;
+    private OAuthApi api;
 
-    public AccessToken(String accessorId, String accessToken, String scope, String remoteAddress, Long tokenExpiresAt, Integer type) {
+    public AccessToken(String accessorId, String token, Long expiresAt, String type, OAuthApi api) {
         this.accessorId = accessorId;
-        this.accessToken = accessToken;
-        this.scope = scope;
-        this.remoteAddress = remoteAddress;
-        this.tokenExpiresAt = tokenExpiresAt;
+        this.token = token;
+        this.expiresAt = expiresAt;
         this.type = type;
+        this.api = api;
     }
 
     public AccessTokenMessage getMessage() {
-        return new AccessTokenMessage(accessorId, accessToken, type, tokenExpiresAt);
+        return new AccessTokenMessage(accessorId, token, type, expiresAt);
     }
 
     public String getAccessorId() {
@@ -32,43 +31,35 @@ public class AccessToken extends AbstractModel {
         this.accessorId = accessorId;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getToken() {
+        return token;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setToken(String token) {
+        this.token = token;
     }
 
-    public String getScope() {
-        return scope;
+    public Long getExpiresAt() {
+        return expiresAt;
     }
 
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setExpiresAt(Long expiresAt) {
+        this.expiresAt = expiresAt;
     }
 
-    public String getRemoteAddress() {
-        return remoteAddress;
-    }
-
-    public void setRemoteAddress(String remoteAddress) {
-        this.remoteAddress = remoteAddress;
-    }
-
-    public Long getTokenExpiresAt() {
-        return tokenExpiresAt;
-    }
-
-    public void setTokenExpiresAt(Long tokenExpiresAt) {
-        this.tokenExpiresAt = tokenExpiresAt;
-    }
-
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
+    }
+
+    public OAuthApi getApi() {
+        return api;
+    }
+
+    public void setApi(OAuthApi api) {
+        this.api = api;
     }
 }

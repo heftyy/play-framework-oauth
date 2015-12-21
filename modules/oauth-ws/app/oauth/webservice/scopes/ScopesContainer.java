@@ -1,6 +1,6 @@
 package oauth.webservice.scopes;
 
-import oauth.webservice.ValidAccessor;
+import oauth.webservice.Accessor;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public interface ScopesContainer {
      * @param scope    String: Scope asked for.
      * @return Boolean: True if client is allowed, false if not.
      */
-    boolean checkIfClientAllowed(ValidAccessor accessor, String scope);
+    boolean checkIfClientAllowed(Accessor accessor, String scope);
 
     /**
      * Searches through all the levels and scopes looking for the correct scope.

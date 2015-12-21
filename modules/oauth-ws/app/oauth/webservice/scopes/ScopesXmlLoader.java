@@ -1,18 +1,17 @@
-package oauth.webservice;
+package oauth.webservice.scopes;
 
-import oauth.webservice.scopes.ScopesContainer;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 
 import javax.inject.Inject;
 import java.util.List;
 
-public class PropertiesLoader {
+public class ScopesXmlLoader {
 
     private final ScopesContainer scopesContainer;
 
     @Inject
-    public PropertiesLoader(ScopesContainer scopesContainer) {
+    public ScopesXmlLoader(ScopesContainer scopesContainer) {
         this.scopesContainer = scopesContainer;
     }
 

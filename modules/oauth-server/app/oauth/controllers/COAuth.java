@@ -68,7 +68,7 @@ public class COAuth extends Controller {
          * Validating received data. Checking if data+signature created using secret key (.p12) is OK.
          */
 
-        JsonWebToken jwt = null;
+        JsonWebToken jwt;
         try {
             jwt = jwtService.getWebToken(requestToken.getAssertion());
             loggingService.saveLog("received jwt", jwt);
@@ -76,7 +76,7 @@ public class COAuth extends Controller {
             return internalServerError(e.getMessage());
         }
 
-        boolean valid = false;
+        boolean valid;
         try {
             valid = jwtService.validateJWT(jwt);
         } catch (UnsupportedEncodingException | InvalidKeySpecException | SignatureException | InvalidKeyException | NoSuchAlgorithmException e) {
@@ -92,11 +92,10 @@ public class COAuth extends Controller {
                 return forbidden(INVALID);
             }
 
-            AccessToken token = accessorsService.createNewAccessor(
+            AccessToken token = accessorsService.createAccessToken(
                     jwt.getClaim().getAccessorId(),
                     jwt.getClaim().getTime(),
                     jwt.getClaim().getScope(),
-                    request().remoteAddress(),
                     jwt.getClaim().getDomain());
 
             if (token == null) {
@@ -115,9 +114,7 @@ public class COAuth extends Controller {
      *
      * example JSON sent by the web service
      * {
-     * 	"accessorId":"32-hex-long-string",
      * 	"accessToken":"32-hex-long-string",
-     * 	"clientRemoteAddress":"xxx.xxx.xxx.xxx",
      * 	"requestedScope":"/url",
      * 	"domain":"localhost:9000"
      * }
@@ -127,9 +124,7 @@ public class COAuth extends Controller {
      * 	"tokenValid":"true",
      * 	"accessorId":"32-hex-long-string",
      * 	"accessToken":"32-hex-long-string",
-     * 	"clientRemoteAddress":"xxx.xxx.xxx.xxx",
      * 	"allowedScopes":["/url", ...]
-     * 	"expiresAt":"long"
      * }
      * or
      * {
@@ -144,17 +139,15 @@ public class COAuth extends Controller {
         loggingService.saveLog("webservice requesting validation of token", validateRequest);
 
         if (validateRequest == null ||
-                validateRequest.getAccessorId() == null ||
                 validateRequest.getAccessToken() == null ||
-                validateRequest.getClientRemoteAddress() == null ||
-                validateRequest.getRequestedScope() == null) {
+                validateRequest.getRequestedScope() == null ||
+                validateRequest.getDomain() == null) {
             return badRequest("Missing parameter");
         } else {
             AccessToken accessToken = accessorsService.validateAccessToken(
-                    validateRequest.getAccessorId(),
                     validateRequest.getAccessToken(),
                     validateRequest.getRequestedScope(),
-                    validateRequest.getClientRemoteAddress()
+                    validateRequest.getDomain()
             );
 
             loggingService.saveLog("created access token on oauth server", accessToken);
@@ -163,12 +156,10 @@ public class COAuth extends Controller {
                 WebServiceValidateResponse response = new WebServiceValidateResponse(
                         true,
                         accessToken.getAccessorId(),
-                        accessToken.getAccessToken(),
-                        accessToken.getRemoteAddress(),
+                        accessToken.getToken(),
                         scopesService.getLevelsFor(
-                                validateRequest.getAccessorId(),
-                                validateRequest.getDomain()),
-                        accessToken.getTokenExpiresAt()
+                                accessToken.getAccessorId(),
+                                accessToken.getApi().getDomain())
                 );
 
                 loggingService.saveLog("webservice access token response", response);

@@ -11,7 +11,8 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "9.3-1100-jdbc4",
   "org.hibernate" % "hibernate-entitymanager" % "4.3.10.Final",
   "org.jadira.usertype" % "usertype.jodatime" % "2.0.1",
-  "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.0.1"
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.0.1",
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-hibernate4" % "2.5.3"
 )
 
 routesGenerator := InjectedRoutesGenerator

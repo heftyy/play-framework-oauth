@@ -5,40 +5,27 @@ import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;
 import common.models.AbstractModel;
 
-import java.security.MessageDigest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ValidAccessor extends AbstractModel implements Subject {
-
+public class Accessor extends AbstractModel implements Subject {
     protected String accessorId;
     protected String accessToken;
-    protected String remoteAddress;
-    protected Long tokenExpiresAt;
     protected List<SecurityRole> allowedLevels;
-    protected MessageDigest requestHash;
+
+    public Accessor(String accessorId, String accessToken, List<SecurityRole> allowedLevels) {
+        this.accessorId = accessorId;
+        this.accessToken = accessToken;
+        this.allowedLevels = allowedLevels;
+    }
+
+    public List<String> getAllowedLevels() {
+        return allowedLevels.stream().map(allowedLevel -> allowedLevel.roleName).collect(Collectors.toList());
+    }
 
     @Override
     public String getIdentifier() {
         return null;
-    }
-
-    public ValidAccessor(String accessorId, String accessToken, String remoteAddress, Long tokenExpiresAt, List<SecurityRole> allowedLevels, MessageDigest requestHash) {
-        this.accessorId = accessorId;
-        this.accessToken = accessToken;
-        this.remoteAddress = remoteAddress;
-        this.tokenExpiresAt = tokenExpiresAt;
-        this.allowedLevels = allowedLevels;
-        this.requestHash = requestHash;
-    }
-
-    /**
-     * Get a list of level names client is allowed to access.
-     *
-     * @return List<String>: List of level names.
-     */
-    public List<String> getAllowedLevels() {
-        return allowedLevels.stream().map(allowedLevel -> allowedLevel.roleName).collect(Collectors.toList());
     }
 
     @Override
@@ -67,31 +54,7 @@ public class ValidAccessor extends AbstractModel implements Subject {
         this.accessToken = accessToken;
     }
 
-    public String getRemoteAddress() {
-        return remoteAddress;
-    }
-
-    public void setRemoteAddress(String remoteAddress) {
-        this.remoteAddress = remoteAddress;
-    }
-
-    public Long getTokenExpiresAt() {
-        return tokenExpiresAt;
-    }
-
-    public void setTokenExpiresAt(Long tokenExpiresAt) {
-        this.tokenExpiresAt = tokenExpiresAt;
-    }
-
     public void setAllowedLevels(List<SecurityRole> allowedLevels) {
         this.allowedLevels = allowedLevels;
-    }
-
-    public MessageDigest getRequestHash() {
-        return requestHash;
-    }
-
-    public void setRequestHash(MessageDigest requestHash) {
-        this.requestHash = requestHash;
     }
 }

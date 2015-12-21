@@ -3,13 +3,13 @@ package oauth.messages;
 public class AccessTokenMessage extends BaseMessage {
     private String accessorId;
     private String accessToken;
-    private Integer tokenType;
+    private String tokenType;
     private Long expiresAt;
 
     public AccessTokenMessage() {
     }
 
-    public AccessTokenMessage(String accessorId, String accessToken, Integer tokenType, Long expiresAt) {
+    public AccessTokenMessage(String accessorId, String accessToken, String tokenType, Long expiresAt) {
         this.accessorId = accessorId;
         this.accessToken = accessToken;
         this.tokenType = tokenType;
@@ -24,7 +24,7 @@ public class AccessTokenMessage extends BaseMessage {
         return accessToken;
     }
 
-    public Integer getTokenType() {
+    public String getTokenType() {
         return tokenType;
     }
 

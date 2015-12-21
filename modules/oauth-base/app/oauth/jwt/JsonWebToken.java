@@ -2,6 +2,8 @@ package oauth.jwt;
 
 import common.models.AbstractModel;
 
+import java.util.Objects;
+
 public class JsonWebToken extends AbstractModel {
     JsonWebTokenHeader header;
     JsonWebTokenClaim claim;
@@ -20,6 +22,20 @@ public class JsonWebToken extends AbstractModel {
     public JsonWebToken(String alg, String type, String accessorId, String domain, String scope, String authUrl, Long time) {
         this.header = new JsonWebTokenHeader(alg, type);
         this.claim = new JsonWebTokenClaim(accessorId, domain, scope, authUrl, time);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JsonWebToken webToken = (JsonWebToken) o;
+        return Objects.equals(header, webToken.header) &&
+                Objects.equals(claim, webToken.claim);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(header, claim);
     }
 
     public JsonWebTokenHeader getHeader() {

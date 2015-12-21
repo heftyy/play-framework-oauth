@@ -1,23 +1,26 @@
 package oauth.controllers;
 
-import oauth.webservice.AccessorsContainerWithMD5;
-import oauth.webservice.AccessorsContainer;
+import oauth.webservice.Accessor;
+import oauth.webservice.AccessorsServiceWithMD5;
+import oauth.webservice.AccessorsService;
 import oauth.webservice.scopes.ScopesContainer;
+import play.libs.F;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.security.MessageDigest;
+import java.util.Optional;
 
 public class WSControllerAction extends Action<WSController> {
 
     private final ScopesContainer scopesContainer;
-    private final AccessorsContainer accessorsContainer;
+    private final AccessorsService accessorsService;
 
     @Inject
-    public WSControllerAction(AccessorsContainer accessorsContainer, ScopesContainer scopesContainer) {
-        this.accessorsContainer = accessorsContainer;
+    public WSControllerAction(AccessorsService accessorsService, ScopesContainer scopesContainer) {
+        this.accessorsService = accessorsService;
         this.scopesContainer = scopesContainer;
     }
 
@@ -26,43 +29,25 @@ public class WSControllerAction extends Action<WSController> {
      * declared in .xml properties file then the method assumes deadbolt is preset as
      * well and doesnt do anything. If scopes were not declared then this method validates the request.
      *
-     * @param ctx Http.Context
+     * @param context Http.Context
      */
-    public play.libs.F.Promise<Result> call(Http.Context ctx) throws Throwable {       //FIXME was Result
-
-        //If you specify scopes then you need to specify restriction
-
+    public play.libs.F.Promise<Result> call(Http.Context context) throws Throwable {
         if (scopesContainer.isScopesLoaded()) {
-            return delegate.call(ctx);
-
+            return delegate.call(context);
         } else {
+            String[] authorizations = context.request().headers().get("Authorization");
 
-            String accessorId = null, userAgent = null, ip = null;
-            MessageDigest md = null;
+            if(authorizations == null || authorizations.length == 0) return delegate.call(context);
 
-            try {
+            String authorization = authorizations[0];
+            if(authorization.contains(" ")) {
+                String type = authorization.split(" ")[0];
+                String token = authorization.split(" ")[1];
 
-                accessorId = ctx.request().headers().get("ACCESSOR-ID")[0];
-                userAgent = ctx.request().headers().get("USER-AGENT")[0];
-                ip = ctx.request().remoteAddress();
-
-                if (accessorId != null && userAgent != null && ip != null) {
-                    md = AccessorsContainerWithMD5.createMD5Hash(accessorId, ip, userAgent);
-                }
-
-
-            } catch (NullPointerException e) {
-                System.err.println("Not a valid request, missing some headers");
+                Accessor accessor = accessorsService.validateToken(token, "url");
             }
-
-            if (accessorsContainer.findAccessor(accessorId, md.digest()) == null) {
-                System.err.println("Didn't authorize the request");
-            }
-
-            return delegate.call(ctx);
+            return delegate.call(context);
 
         }
-
     }
-
 }
