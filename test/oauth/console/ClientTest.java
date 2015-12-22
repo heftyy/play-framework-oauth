@@ -1,4 +1,4 @@
-package oauth;
+package oauth.console;
 
 import oauth.models.OAuthClient;
 import oauth.services.GenerateKeyService;

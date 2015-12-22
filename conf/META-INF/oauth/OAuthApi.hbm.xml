@@ -8,8 +8,8 @@
 			<generator class="identity" />
 		</id>
 		
-		<property name="onGlobally">
-			<column name="on_boolean"/>
+		<property name="enabled">
+			<column name="enabled"/>
 		</property>
 		
 		<property name="name">
@@ -28,10 +28,10 @@
             <key column="api_id" not-null="true"/>
             <many-to-many column="client_id" class="oauth.models.OAuthClient"/>
         </set>
-		
-        <set name="levels" table="oauth_levels" cascade="all" schema="oauth">
-            <key column="api_id" not-null="true"/>
-            <one-to-many class="oauth.models.OAuthLevel" />
-        </set>
+
+		<set name="scopes" cascade="all">
+			<key column="api_id"/>
+			<one-to-many class="oauth.models.OAuthScope"/>
+		</set>
 	</class>
 </hibernate-mapping>

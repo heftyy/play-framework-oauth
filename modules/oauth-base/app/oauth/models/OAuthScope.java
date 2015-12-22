@@ -1,51 +1,28 @@
 package oauth.models;
 
 import common.models.AbstractModel;
+import org.joda.time.DateTime;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 public class OAuthScope extends AbstractModel {
-    private Long id;
-	private String scopeUrl;
-	private String method;
-	private String returns;
-	private String arguments;
-	private String levelName;
-	private Long apiId;
-	private OAuthLevel level;
+	private Long id;
+	private String name;
+	private String description;
+	private DateTime addTime;
+	private DateTime modTime;
+    private OAuthApi api;
+    private Set<OAuthClient> clients;
+	private Set<OAuthUrlPattern> urlPatterns;
 
-	/**
-	 * Create a single scope, the data will be added using setters.
-	 */
-	OAuthScope() { }
+    public OAuthScope() {
+    }
 
-	/**
-	 * POSSIBLY NOT NEEDED ANYMORE. Create a single scope.
-	 */
-	public OAuthScope(String url, String method, String returns, String arguments, String level, Long apiId) {
-		this.scopeUrl = url;
-		this.method = method;
-		this.returns = returns;
-		this.arguments = arguments;
-		this.apiId = apiId;
-		this.levelName = level;
-	}
-	
-	public OAuthScope(String url, String method, String returns, String arguments, OAuthLevel l) {
-		this.scopeUrl = url;
-		this.method = method;
-		this.returns = returns;
-		this.arguments = arguments;
-		this.level = l;
-	}
-	
-	public OAuthScope(String url, String method, String returns, String arguments) {
-		this.scopeUrl = url;
-		this.method = method;
-		this.returns = returns;
-		this.arguments = arguments;
-	}
+    public OAuthScope(String name, String description, OAuthApi api) {
+        this.name = name;
+        this.description = description;
+        this.api = api;
+    }
 
     public Long getId() {
         return id;
@@ -55,59 +32,59 @@ public class OAuthScope extends AbstractModel {
         this.id = id;
     }
 
-    public String getScopeUrl() {
-        return scopeUrl;
+    public String getName() {
+        return name;
     }
 
-    public void setScopeUrl(String scopeUrl) {
-        this.scopeUrl = scopeUrl;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getMethod() {
-        return method;
+    public String getDescription() {
+        return description;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getReturns() {
-        return returns;
+    public DateTime getAddTime() {
+        return addTime;
     }
 
-    public void setReturns(String returns) {
-        this.returns = returns;
+    public void setAddTime(DateTime addTime) {
+        this.addTime = addTime;
     }
 
-    public String getArguments() {
-        return arguments;
+    public DateTime getModTime() {
+        return modTime;
     }
 
-    public void setArguments(String arguments) {
-        this.arguments = arguments;
+    public void setModTime(DateTime modTime) {
+        this.modTime = modTime;
     }
 
-    public String getLevelName() {
-        return levelName;
+    public OAuthApi getApi() {
+        return api;
     }
 
-    public void setLevelName(String levelName) {
-        this.levelName = levelName;
+    public void setApi(OAuthApi api) {
+        this.api = api;
     }
 
-    public Long getApiId() {
-        return apiId;
+    public Set<OAuthClient> getClients() {
+        return clients;
     }
 
-    public void setApiId(Long apiId) {
-        this.apiId = apiId;
+    public void setClients(Set<OAuthClient> clients) {
+        this.clients = clients;
     }
 
-    public OAuthLevel getLevel() {
-        return level;
+    public Set<OAuthUrlPattern> getUrlPatterns() {
+        return urlPatterns;
     }
 
-    public void setLevel(OAuthLevel level) {
-        this.level = level;
+    public void setUrlPatterns(Set<OAuthUrlPattern> urlPatterns) {
+        this.urlPatterns = urlPatterns;
     }
 }

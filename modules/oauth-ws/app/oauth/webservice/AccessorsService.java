@@ -1,17 +1,18 @@
 package oauth.webservice;
 
-import oauth.messages.WebServiceValidateResponse;
+import oauth.messages.WSValidateResponse;
 
 import java.util.stream.Collectors;
 
 public interface AccessorsService {
     Accessor validateToken(String token, String requestedScope);
 
-    default Accessor getAccessor(WebServiceValidateResponse response) {
+    default Accessor getAccessor(WSValidateResponse response) {
         return new Accessor(
                 response.getAccessorId(),
                 response.getAccessToken(),
-                response.getAllowedLevels().stream().map(SecurityRole::new).collect(Collectors.toList())
+                response.getAllowedScopes() == null ? null :
+                        response.getAllowedScopes().stream().map(SecurityRole::new).collect(Collectors.toList())
         );
     }
 }

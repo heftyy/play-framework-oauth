@@ -3,9 +3,10 @@ package oauth.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import oauth.accessor.AccessToken;
 import oauth.jwt.JsonWebToken;
+import oauth.messages.AccessTokenFailure;
 import oauth.messages.RequestToken;
-import oauth.messages.WebServiceValidateRequest;
-import oauth.messages.WebServiceValidateResponse;
+import oauth.messages.WSValidateRequest;
+import oauth.messages.WSValidateResponse;
 import oauth.services.JwtService;
 import oauth.services.LoggingService;
 import oauth.services.ScopesService;
@@ -67,29 +68,29 @@ public class COAuth extends Controller {
         /**
          * Validating received data. Checking if data+signature created using secret key (.p12) is OK.
          */
-
         JsonWebToken jwt;
         try {
             jwt = jwtService.getWebToken(requestToken.getAssertion());
             loggingService.saveLog("received jwt", jwt);
         } catch (UnsupportedEncodingException e) {
-            return internalServerError(e.getMessage());
+            e.printStackTrace();
+            return badRequest(new AccessTokenFailure("invalid_request", "Parsing the assertion failed").getJson());
         }
 
-        boolean valid;
+        boolean jwtValid;
         try {
-            valid = jwtService.validateJWT(jwt);
+            jwtValid = jwtService.validateJWT(jwt);
         } catch (UnsupportedEncodingException | InvalidKeySpecException | SignatureException | InvalidKeyException | NoSuchAlgorithmException e) {
             e.printStackTrace();
-            return internalServerError(e.getMessage());
+            return badRequest(new AccessTokenFailure("invalid_grant", "Validating jwt failed.").getJson());
         }
 
-        if (valid) {
+        if (jwtValid) {
             /**
              * Validating scopes.
              */
             if (!accessorsService.validateScopeRequest(jwt.getClaim().getAccessorId(), jwt.getClaim().getDomain(), jwt.getClaim().getScope())) {
-                return forbidden(INVALID);
+                return badRequest(new AccessTokenFailure("invalid_scope").getJson());
             }
 
             AccessToken token = accessorsService.createAccessToken(
@@ -99,13 +100,13 @@ public class COAuth extends Controller {
                     jwt.getClaim().getDomain());
 
             if (token == null) {
-                return forbidden(INVALID);
+                return badRequest(new AccessTokenFailure("invalid_client").getJson());
             } else {
                 loggingService.saveLog("token generated for " + jwt.getClaim().getAccessorId(), token.getMessage());
                 return ok(token.getMessage().getJson());
             }
         }
-        return forbidden(INVALID);
+        return badRequest(new AccessTokenFailure("invalid_grant").getJson());
     }
 
     /**
@@ -134,7 +135,7 @@ public class COAuth extends Controller {
     @Transactional
     public Result validateToken() {
         JsonNode json = request().body().asJson();
-        WebServiceValidateRequest validateRequest = Json.fromJson(json, WebServiceValidateRequest.class);
+        WSValidateRequest validateRequest = Json.fromJson(json, WSValidateRequest.class);
 
         loggingService.saveLog("webservice requesting validation of token", validateRequest);
 
@@ -150,25 +151,25 @@ public class COAuth extends Controller {
                     validateRequest.getDomain()
             );
 
-            loggingService.saveLog("created access token on oauth server", accessToken);
+            WSValidateResponse response;
 
             if (accessToken != null) {
-                WebServiceValidateResponse response = new WebServiceValidateResponse(
+                loggingService.saveLog("created access token on oauth server", accessToken);
+
+                response = new WSValidateResponse(
                         true,
                         accessToken.getAccessorId(),
                         accessToken.getToken(),
-                        scopesService.getLevelsFor(
+                        scopesService.getScopesFor(
                                 accessToken.getAccessorId(),
                                 accessToken.getApi().getDomain())
                 );
-
-                loggingService.saveLog("webservice access token response", response);
-
-                return ok(response.getJson());
             } else {
-                WebServiceValidateResponse response = new WebServiceValidateResponse(false);
-                return ok(response.getJson());
+                response = new WSValidateResponse(false);
             }
+
+            loggingService.saveLog("webservice access token response", response);
+            return ok(response.getJson());
         }
     }
 }

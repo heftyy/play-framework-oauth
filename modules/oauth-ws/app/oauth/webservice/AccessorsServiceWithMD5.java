@@ -1,8 +1,8 @@
 package oauth.webservice;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import oauth.messages.WebServiceValidateRequest;
-import oauth.messages.WebServiceValidateResponse;
+import oauth.messages.WSValidateRequest;
+import oauth.messages.WSValidateResponse;
 import oauth.webservice.scopes.ScopesContainer;
 import play.Configuration;
 import play.libs.F;
@@ -15,7 +15,6 @@ import javax.inject.Singleton;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Singleton
 public class AccessorsServiceWithMD5 implements AccessorsService {
@@ -64,7 +63,7 @@ public class AccessorsServiceWithMD5 implements AccessorsService {
      * Creates new accessor in the memory if everything is OK.
      */
     public Accessor createNewAccessor(String accessorId, String accessToken, String remoteAddress, String domain, String scope, String userAgent) {
-        WebServiceValidateResponse response = askOauthIfAccessTokenValid(accessorId, accessToken, remoteAddress, domain, scope);
+        WSValidateResponse response = askOauthIfAccessTokenValid(accessorId, accessToken, remoteAddress, domain, scope);
         if(response == null) return null;
 
         Accessor newAccessor = getAccessor(response);
@@ -98,7 +97,7 @@ public class AccessorsServiceWithMD5 implements AccessorsService {
      * Send a POST request to the oauth authorization server to validate the
      * data sent by a client. It uses play framework's F.Promise. Sends a JSON
      * with data about the client and receives a JSON including
-     * token_valid:true/false and level client is allowed to.
+     * token_valid:true/false and scope client is allowed to.
      *
      * @param accessorId
      *            String: Client's accessorId.
@@ -112,8 +111,8 @@ public class AccessorsServiceWithMD5 implements AccessorsService {
      *            String: Scope client asked for.
      * @return JsonNode: JSON with all the data received from oauth.
      */
-    private WebServiceValidateResponse askOauthIfAccessTokenValid(String accessorId, String accessToken, String remoteAddress, String domain, String scope) {
-        WebServiceValidateRequest request = new WebServiceValidateRequest(
+    private WSValidateResponse askOauthIfAccessTokenValid(String accessorId, String accessToken, String remoteAddress, String domain, String scope) {
+        WSValidateRequest request = new WSValidateRequest(
                 accessToken,
                 scope,
                 domain
@@ -124,7 +123,7 @@ public class AccessorsServiceWithMD5 implements AccessorsService {
         String body = promise.get(10000L).getBody();
 
         JsonNode responseJson = Json.parse(body);
-        WebServiceValidateResponse response = Json.fromJson(responseJson, WebServiceValidateResponse.class);
+        WSValidateResponse response = Json.fromJson(responseJson, WSValidateResponse.class);
         if(response != null && response.isTokenValid()) return response;
         return null;
     }

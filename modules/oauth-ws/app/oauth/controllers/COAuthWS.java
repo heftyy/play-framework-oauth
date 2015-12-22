@@ -1,13 +1,6 @@
 package oauth.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import oauth.messages.WebServiceAuthorize;
-import oauth.services.LoggingService;
-import oauth.webservice.AccessorsService;
-import oauth.webservice.Accessor;
 import oauth.webservice.scopes.ScopesContainer;
-import play.Configuration;
-import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -19,16 +12,10 @@ public class COAuthWS extends Controller {
     private static final String INVALID = "invalid";
 
     private final ScopesContainer scopesContainer;
-    private final AccessorsService accessorsService;
-    private final LoggingService loggingService;
 
     @Inject
-    public COAuthWS(AccessorsService accessorsService,
-                    ScopesContainer scopesContainer,
-                    LoggingService loggingService) {
-        this.accessorsService = accessorsService;
+    public COAuthWS(ScopesContainer scopesContainer) {
         this.scopesContainer = scopesContainer;
-        this.loggingService = loggingService;
     }
 
     /**
@@ -41,6 +28,7 @@ public class COAuthWS extends Controller {
      * is incomplete.
      */
 
+    /*
     @Deprecated
     @Transactional
     public Result authorize() {
@@ -57,9 +45,6 @@ public class COAuthWS extends Controller {
         String userAgent = null, ip = null;
         try {
             userAgent = request().headers().get("User-Agent")[0];
-//                  ip = request().remoteAddress();
-//					System.out.println(userAgent);
-//					System.out.println(ip);
         } catch (NullPointerException e) {
             return badRequest("Bad request\r\n");
         }
@@ -77,6 +62,7 @@ public class COAuthWS extends Controller {
             return badRequest(INVALID);
         }
     }
+    */
 
     /**
      * Method called by oauth to download scopes from the webservice.
@@ -84,6 +70,6 @@ public class COAuthWS extends Controller {
      * @return String: String with all the scopes.
      */
     public Result scopes() {
-        return ok(Json.toJson(scopesContainer.getLevels()));
+        return ok(Json.toJson(scopesContainer.getScopes()));
     }
 }

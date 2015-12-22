@@ -2,24 +2,24 @@ package oauth.messages;
 
 import java.util.Set;
 
-public class WebServiceValidateResponse extends BaseMessage {
+public class WSValidateResponse extends BaseMessage {
     private boolean tokenValid;
     private String accessorId;
     private String accessToken;
-    private Set<String> allowedLevels;
+    private Set<String> allowedScopes;
 
-    public WebServiceValidateResponse() {
+    public WSValidateResponse() {
     }
 
-    public WebServiceValidateResponse(boolean tokenValid) {
+    public WSValidateResponse(boolean tokenValid) {
         this.tokenValid = tokenValid;
     }
 
-    public WebServiceValidateResponse(boolean tokenValid, String accessorId, String accessToken, Set<String> allowedLevels) {
+    public WSValidateResponse(boolean tokenValid, String accessorId, String accessToken, Set<String> allowedScopes) {
         this.tokenValid = tokenValid;
         this.accessorId = accessorId;
         this.accessToken = accessToken;
-        this.allowedLevels = allowedLevels;
+        this.allowedScopes = allowedScopes;
     }
 
     public boolean isTokenValid() {
@@ -34,7 +34,7 @@ public class WebServiceValidateResponse extends BaseMessage {
         return accessToken;
     }
 
-    public Set<String> getAllowedLevels() {
-        return allowedLevels;
+    public Set<String> getAllowedScopes() {
+        return allowedScopes;
     }
 }

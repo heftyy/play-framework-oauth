@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.TypeLiteral;
 import common.json.DataSourceOptions;
-import common.utils.Page;
 import common.models.AbstractModel;
+import common.utils.Page;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
@@ -24,6 +24,41 @@ import java.util.stream.Stream;
 public class HibernateRepository<T extends AbstractModel> implements Repository<T> {
 
     private Class<T> type;
+
+    @Override
+    public List<T> parseJson(JsonNode jn) {
+        ArrayNode models = (ArrayNode) jn.findPath("models");
+        List<T> result = new ArrayList<>();
+        for (JsonNode jsonObject : models) {
+            T obj = Json.fromJson(jsonObject, type);
+            result.add(obj);
+        }
+        return result;
+    }
+
+    @Override
+    public ArrayNode removeFromJson(JsonNode jn) {
+        ArrayNode models = (ArrayNode) jn.findPath("models");
+        ArrayNode result = new ArrayNode(JsonNodeFactory.instance);
+        for (JsonNode jsonObject : models) {
+            AbstractModel dataObject = Json.fromJson(jsonObject, type);
+            JPA.em().remove(dataObject);
+            result.add(dataObject.getJson());
+        }
+        return result;
+    }
+
+    @Override
+    public ArrayNode updateFromJson(JsonNode jn) {
+        ArrayNode models = (ArrayNode) jn.findPath("models");
+        ArrayNode result = new ArrayNode(JsonNodeFactory.instance);
+        for (JsonNode jsonObject : models) {
+            AbstractModel dataObject = Json.fromJson(jsonObject, type);
+            getSession().saveOrUpdate(dataObject);
+            result.add(dataObject.getJson());
+        }
+        return result;
+    }
 
     @Inject
     @SuppressWarnings("unchecked")
@@ -166,42 +201,6 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
 
         Object result = criteria.uniqueResult();
         return result == null ? null : (T) result;
-    }
-
-    @Override
-    public List<T> parseJson(String json) {
-        JsonNode jn = Json.parse(json);
-        ArrayNode models = (ArrayNode) jn.findPath("models");
-        List<T> result = new ArrayList<>();
-        for (JsonNode jsonObject : models) {
-            T obj = Json.fromJson(jsonObject, type);
-            result.add(obj);
-        }
-        return result;
-    }
-
-    @Override
-    public ArrayNode removeFromJson(JsonNode jn) {
-        ArrayNode models = (ArrayNode) jn.findPath("models");
-        ArrayNode result = new ArrayNode(JsonNodeFactory.instance);
-        for (JsonNode jsonObject : models) {
-            AbstractModel dataObject = Json.fromJson(jsonObject, type);
-            JPA.em().remove(dataObject);
-            result.add(dataObject.getJson());
-        }
-        return result;
-    }
-
-    @Override
-    public ArrayNode updateFromJson(JsonNode jn) {
-        ArrayNode models = (ArrayNode) jn.findPath("models");
-        ArrayNode result = new ArrayNode(JsonNodeFactory.instance);
-        for (JsonNode jsonObject : models) {
-            AbstractModel dataObject = Json.fromJson(jsonObject, type);
-            getSession().saveOrUpdate(dataObject);
-            result.add(dataObject.getJson());
-        }
-        return result;
     }
 
     private void addAliases(Criteria criteria, Map<String, JoinType> aliases) {

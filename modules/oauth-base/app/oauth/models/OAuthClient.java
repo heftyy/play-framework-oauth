@@ -2,10 +2,8 @@ package oauth.models;
 
 import common.models.AbstractModel;
 import org.joda.time.DateTime;
-import play.db.jpa.JPA;
 
 import java.util.Set;
-import java.util.UUID;
 
 public class OAuthClient extends AbstractModel {
 
@@ -16,7 +14,7 @@ public class OAuthClient extends AbstractModel {
 	private String password;
 	private DateTime creationTime;
 	private Set<OAuthApi> apis;
-	private Set<OAuthLevel> levels;
+	private Set<OAuthScope> scopes;
 
     public Long getId() {
         return id;
@@ -74,11 +72,11 @@ public class OAuthClient extends AbstractModel {
         this.apis = apis;
     }
 
-    public Set<OAuthLevel> getLevels() {
-        return levels;
+    public Set<OAuthScope> getScopes() {
+        return scopes;
     }
 
-    public void setLevels(Set<OAuthLevel> levels) {
-        this.levels = levels;
+    public void setScopes(Set<OAuthScope> scopes) {
+        this.scopes = scopes;
     }
 }

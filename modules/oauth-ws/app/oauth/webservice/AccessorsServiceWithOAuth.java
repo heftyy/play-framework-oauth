@@ -1,8 +1,8 @@
 package oauth.webservice;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import oauth.messages.WebServiceValidateRequest;
-import oauth.messages.WebServiceValidateResponse;
+import oauth.messages.WSValidateRequest;
+import oauth.messages.WSValidateResponse;
 import play.Configuration;
 import play.libs.F;
 import play.libs.Json;
@@ -16,14 +16,14 @@ public class AccessorsServiceWithOAuth implements AccessorsService {
 
     @Override
     public Accessor validateToken(String token, String requestedScope) {
-        WebServiceValidateResponse response = sendValidateRequest(token, requestedScope);
+        WSValidateResponse response = sendValidateRequest(token, requestedScope);
         if(response == null) return null;
 
         return getAccessor(response);
     }
 
-    private WebServiceValidateResponse sendValidateRequest(String accessToken, String requestedScope) {
-        WebServiceValidateRequest request = new WebServiceValidateRequest(
+    private WSValidateResponse sendValidateRequest(String accessToken, String requestedScope) {
+        WSValidateRequest request = new WSValidateRequest(
                 accessToken,
                 requestedScope,
                 DOMAIN
@@ -33,7 +33,7 @@ public class AccessorsServiceWithOAuth implements AccessorsService {
 
         JsonNode responseJson = promise.get(10000L).asJson();
 
-        WebServiceValidateResponse response = Json.fromJson(responseJson, WebServiceValidateResponse.class);
+        WSValidateResponse response = Json.fromJson(responseJson, WSValidateResponse.class);
         if(response != null) return response;
         return null;
     }

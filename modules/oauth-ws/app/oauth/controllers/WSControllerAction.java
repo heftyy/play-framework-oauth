@@ -1,17 +1,13 @@
 package oauth.controllers;
 
 import oauth.webservice.Accessor;
-import oauth.webservice.AccessorsServiceWithMD5;
 import oauth.webservice.AccessorsService;
 import oauth.webservice.scopes.ScopesContainer;
-import play.libs.F;
 import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
-import java.security.MessageDigest;
-import java.util.Optional;
 
 public class WSControllerAction extends Action<WSController> {
 
@@ -32,7 +28,7 @@ public class WSControllerAction extends Action<WSController> {
      * @param context Http.Context
      */
     public play.libs.F.Promise<Result> call(Http.Context context) throws Throwable {
-        if (scopesContainer.isScopesLoaded()) {
+        if (scopesContainer.isReady()) {
             return delegate.call(context);
         } else {
             String[] authorizations = context.request().headers().get("Authorization");

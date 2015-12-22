@@ -56,6 +56,6 @@ public class OAuthHandler extends AbstractDeadboltHandler {
         if (context.request().headers().get("X-Requested-With") != null && context.request().headers().get("X-Requested-With")[0].equals("XMLHttpRequest")) {
             return F.Promise.promise((F.Function0<Result>) () -> forbidden("redirect_login"));
         }
-        return F.Promise.promise((F.Function0<Result>) Results::forbidden);
+        return F.Promise.promise((F.Function0<Result>) () -> forbidden("forbidden"));
     }
 }

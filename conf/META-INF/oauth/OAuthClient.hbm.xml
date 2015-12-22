@@ -23,9 +23,9 @@
             <many-to-many column="api_id" class="oauth.models.OAuthApi"/>
         </set>
         
-        <set name="levels" table="oauth_client_level" cascade="all" schema="oauth">
+        <set name="scopes" table="oauth_client_level" cascade="all" schema="oauth">
             <key column="client_id" not-null="true"/>
-            <many-to-many class="oauth.models.OAuthLevel" column="level_id"/>
+            <many-to-many class="oauth.models.OAuthScope" column="level_id"/>
         </set>
 	</class>
 </hibernate-mapping>

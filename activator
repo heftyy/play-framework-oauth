@@ -60,8 +60,8 @@ cygwinpath() {
 
 # Make something URI friendly
 make_url() {
-  url="$1"
-  local nospaces=${url// /%20}
+  pattern="$1"
+  local nospaces=${pattern// /%20}
   if is_cygwin; then
     echo "/${nospaces//\\//}"
   else
@@ -257,7 +257,7 @@ Usage: $script_name <command> [options]
 
   Options:
   -v | -verbose      Make this runner chattier
-  -d | -debug        Set sbt log level to debug
+  -d | -debug        Set sbt log scope to debug
   -mem <integer>     Set memory options (default: $sbt_mem, which is $(get_mem_opts $sbt_mem))
   -jvm-debug <port>  Turn on JVM debugging, open at the given port.
 
@@ -324,7 +324,7 @@ elif [[ ! "$java_version" > "1.6" ]]; then
 fi
 
 # if configuration files exist, prepend their contents to the java args so it can be processed by this runner
-# a "versioned" config trumps one on the top level
+# a "versioned" config trumps one on the top scope
 if [[ -f "$java_opts_config_version" ]]; then
   addConfigOpts $(loadConfigFile "$java_opts_config_version")
 elif [[ -f "$java_opts_config_home" ]]; then

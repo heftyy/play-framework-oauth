@@ -1,19 +1,19 @@
 package oauth.messages;
 
-public class AccessTokenMessage extends BaseMessage {
+public class AccessTokenSuccess extends BaseMessage {
     private String accessorId;
     private String accessToken;
     private String tokenType;
-    private Long expiresAt;
+    private Long expiresIn;
 
-    public AccessTokenMessage() {
+    public AccessTokenSuccess() {
     }
 
-    public AccessTokenMessage(String accessorId, String accessToken, String tokenType, Long expiresAt) {
+    public AccessTokenSuccess(String accessorId, String accessToken, String tokenType, Long expiresIn) {
         this.accessorId = accessorId;
         this.accessToken = accessToken;
         this.tokenType = tokenType;
-        this.expiresAt = expiresAt;
+        this.expiresIn = expiresIn;
     }
 
     public String getAccessorId() {
@@ -28,7 +28,7 @@ public class AccessTokenMessage extends BaseMessage {
         return tokenType;
     }
 
-    public Long getExpiresAt() {
-        return expiresAt;
+    public Long getExpiresIn() {
+        return expiresIn;
     }
 }

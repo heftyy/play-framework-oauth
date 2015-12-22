@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @Singleton
 public class TokenServiceWithMemory implements TokenService {
-    private static int TOKEN_VALID_FOR_MILLISECONDS = 15 * 60 * 1000; // in milliseconds ( 15 minutes )
     private static String TOKEN_TYPE = "Bearer";
 
     private Map<String, AccessToken> accessTokens = new HashMap<>();
@@ -34,9 +33,12 @@ public class TokenServiceWithMemory implements TokenService {
     @Override
     public AccessToken getAccessToken(String token) {
         for(AccessToken accessToken : accessTokens.values()) {
-            if(accessToken.getToken().equals(token) &&
-                    accessToken.getExpiresAt() > System.currentTimeMillis()) {
-                return accessToken;
+            if(accessToken.getToken().equals(token)) {
+                if(accessToken.getExpiresAt() > System.currentTimeMillis()) {
+                    return accessToken;
+                } else { // remove outdated tokens
+                    accessTokens.remove(getMapKey(accessToken.getAccessorId(), accessToken.getApi().getDomain()));
+                }
             }
         }
 
@@ -59,7 +61,7 @@ public class TokenServiceWithMemory implements TokenService {
 
     @Override
     public boolean validateScopeRequest(String accessorId, String domain, String scopeRequested) {
-        Set<String> scopes = scopesService.getScopesFor(accessorId, domain);
+        Set<String> scopes = scopesService.getPatternsFor(accessorId, domain);
 
         for(String scope : scopes) {
             if(ScopesStringCompare.compareStringsRegex(scopeRequested, scope)) return true;
@@ -74,11 +76,12 @@ public class TokenServiceWithMemory implements TokenService {
         if(accessToken != null) return accessToken;
 
         OAuthApi api = apiRepository.findByField("domain", domain);
+        if(api == null) return null;
 
         accessToken = new AccessToken(
                 accessorId,
                 UUID.randomUUID().toString(),
-                time + TOKEN_VALID_FOR_MILLISECONDS,
+                time + AccessToken.TOKEN_VALID_FOR_MILLISECONDS,
                 TOKEN_TYPE,
                 api);
 

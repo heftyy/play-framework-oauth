@@ -3,8 +3,12 @@ package oauth;
 import oauth.client.PlayWSOAuthClient;
 import oauth.client.PrivateKeySigningService;
 import oauth.client.SigningService;
+import oauth.console.ClientTest;
+import oauth.helper.RepositoryHelper;
 import oauth.jwt.JsonWebToken;
 import oauth.models.OAuthClient;
+import oauth.services.GenerateKeyService;
+import oauth.services.JwtService;
 import org.junit.Test;
 import play.Play;
 import play.db.jpa.JPA;
@@ -22,28 +26,29 @@ public class JwtTest extends GenericFakeAppTest {
                 OAuthClient client = ClientTest.getClientWithKey();
                 JPA.em().persist(client);
 
-                TestServices testServices = Play.application().injector().instanceOf(TestServices.class);
-
                 JsonWebToken jwt = new JsonWebToken(
                         "RSA256",
                         "alg",
                         client.getAccessorId(),
                         "localhost:9000",
-                        "/oauth/ws/data",
+                        "/oauth/ws/data1",
                         PlayWSOAuthClient.getRequestTokenUrl(),
                         System.currentTimeMillis()
                 );
 
+                GenerateKeyService keyService = Play.application().injector().instanceOf(GenerateKeyService.class);
+                JwtService jwtService = Play.application().injector().instanceOf(JwtService.class);
+
                 SigningService signingService = new PrivateKeySigningService(
-                        testServices.generateKeyService.getSecretKeyPath(client.getAccessorId()),
+                        keyService.getSecretKeyPath(client.getAccessorId()),
                         client.getPassword()
                 );
 
                 try {
                     String assertion = signingService.signJwt(jwt);
-                    JsonWebToken unHashedJwt = testServices.jwtService.getWebToken(assertion);
+                    JsonWebToken unHashedJwt = jwtService.getWebToken(assertion);
                     assertEquals(jwt, unHashedJwt);
-                    assertTrue(testServices.jwtService.validateJWT(unHashedJwt));
+                    assertTrue(jwtService.validateJWT(unHashedJwt));
                 } catch(Exception e) {
                     e.printStackTrace();
                 }

@@ -1,7 +1,7 @@
 package oauth.client;
 
 import oauth.jwt.JsonWebToken;
-import oauth.messages.AccessTokenMessage;
+import oauth.messages.AccessTokenSuccess;
 import oauth.messages.RequestToken;
 import play.Configuration;
 import play.libs.F.Promise;
@@ -15,7 +15,6 @@ import java.io.UnsupportedEncodingException;
 public class PlayWSOAuthClient implements OAuthApiClient {
     private final String accessorId;
     private final String domain;
-    private final String authScope;
     private final SigningService signingService;
 
     private static final int max_retries = 2;
@@ -30,10 +29,9 @@ public class PlayWSOAuthClient implements OAuthApiClient {
         return "Bearer " + token;
     }
 
-    public PlayWSOAuthClient(String password, String accessorId, String domain, String keyFile, String authScope) {
+    public PlayWSOAuthClient(String password, String accessorId, String domain, String keyFile) {
         this.accessorId = accessorId;
         this.domain = domain;
-        this.authScope = authScope;
         this.signingService = new PrivateKeySigningService(keyFile, password);
     }
 
@@ -59,7 +57,7 @@ public class PlayWSOAuthClient implements OAuthApiClient {
         if (response.getStatus() == Http.Status.OK) {
             return response;
         } else if (response.getStatus() == Http.Status.FORBIDDEN) {
-            AccessTokenMessage tokenMessage = getAccessToken(scopeUrl);
+            AccessTokenSuccess tokenMessage = getAccessToken(scopeUrl);
             if (token != null && current_retries < max_retries) {
                 return this.doGet(scopeUrl, tokenMessage.getAccessToken(), ++current_retries);
             }
@@ -81,7 +79,7 @@ public class PlayWSOAuthClient implements OAuthApiClient {
         if (response.getStatus() == Http.Status.OK) {
             return response;
         } else if (response.getStatus() == Http.Status.FORBIDDEN) {
-            AccessTokenMessage tokenMessage = getAccessToken(scopeUrl);
+            AccessTokenSuccess tokenMessage = getAccessToken(scopeUrl);
             if (token != null && current_retries < max_retries) {
                 return this.doPost(scopeUrl, args, tokenMessage.getAccessToken(), ++current_retries);
             }
@@ -89,9 +87,9 @@ public class PlayWSOAuthClient implements OAuthApiClient {
         return null;
     }
 
-    public AccessTokenMessage getAccessToken(String scope) throws Exception {
+    public AccessTokenSuccess getAccessToken(String requestedScope) throws Exception {
         String authUrl = getRequestTokenUrl();
-        JsonWebToken jwt = new JsonWebToken("RSA256", "alg", this.accessorId, this.domain, scope, authUrl, System.currentTimeMillis());
+        JsonWebToken jwt = new JsonWebToken("RSA256", "alg", this.accessorId, this.domain, requestedScope, authUrl, System.currentTimeMillis());
 
         String assertion = signingService.signJwt(jwt);
 
@@ -101,7 +99,7 @@ public class PlayWSOAuthClient implements OAuthApiClient {
         WSResponse response = ret.get(10000);
         if (response.getStatus() == Http.Status.OK) {
             String jsonToken = response.getBody();
-            return Json.fromJson(Json.parse(jsonToken), AccessTokenMessage.class);
+            return Json.fromJson(Json.parse(jsonToken), AccessTokenSuccess.class);
         }
         return null;
     }

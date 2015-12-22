@@ -1,0 +1,6 @@
+[
+  {"name": "test1", "description": "test level", "urlPatterns": [
+    {"pattern": "/oauth/ws/data1", "description": "read webservice data 1", "method": "GET", "returns": "json"},
+    {"pattern": "/test", "description": "read test url", "method": "GET", "returns": "text"}
+  ]}
+]

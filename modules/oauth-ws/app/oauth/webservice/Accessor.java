@@ -11,16 +11,16 @@ import java.util.stream.Collectors;
 public class Accessor extends AbstractModel implements Subject {
     protected String accessorId;
     protected String accessToken;
-    protected List<SecurityRole> allowedLevels;
+    protected List<SecurityRole> allowedScopes;
 
-    public Accessor(String accessorId, String accessToken, List<SecurityRole> allowedLevels) {
+    public Accessor(String accessorId, String accessToken, List<SecurityRole> allowedScopes) {
         this.accessorId = accessorId;
         this.accessToken = accessToken;
-        this.allowedLevels = allowedLevels;
+        this.allowedScopes = allowedScopes;
     }
 
-    public List<String> getAllowedLevels() {
-        return allowedLevels.stream().map(allowedLevel -> allowedLevel.roleName).collect(Collectors.toList());
+    public List<String> getAllowedScopes() {
+        return allowedScopes.stream().map(scope -> scope.roleName).collect(Collectors.toList());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class Accessor extends AbstractModel implements Subject {
 
     @Override
     public List<? extends Role> getRoles() {
-        return allowedLevels;
+        return allowedScopes;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Accessor extends AbstractModel implements Subject {
         this.accessToken = accessToken;
     }
 
-    public void setAllowedLevels(List<SecurityRole> allowedLevels) {
-        this.allowedLevels = allowedLevels;
+    public void setAllowedScopes(List<SecurityRole> allowedScopes) {
+        this.allowedScopes = allowedScopes;
     }
 }

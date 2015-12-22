@@ -14,8 +14,8 @@ public class OAuthBaseModule extends AbstractModule {
     protected void configure() {
         bind(new TypeLiteral<Repository<OAuthClient>>(){}).to(new TypeLiteral<HibernateRepository<OAuthClient>>(){});
         bind(new TypeLiteral<Repository<OAuthApi>>(){}).to(new TypeLiteral<HibernateRepository<OAuthApi>>(){});
-        bind(new TypeLiteral<Repository<OAuthLevel>>(){}).to(new TypeLiteral<HibernateRepository<OAuthLevel>>(){});
         bind(new TypeLiteral<Repository<OAuthScope>>(){}).to(new TypeLiteral<HibernateRepository<OAuthScope>>(){});
+        bind(new TypeLiteral<Repository<OAuthUrlPattern>>(){}).to(new TypeLiteral<HibernateRepository<OAuthUrlPattern>>(){});
         bind(new TypeLiteral<Repository<OAuthLog>>(){}).to(new TypeLiteral<HibernateRepository<OAuthLog>>(){});
 
         bind(LoggingService.class).to(HibernateLoggingService.class);

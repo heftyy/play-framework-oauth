@@ -21,7 +21,7 @@ public interface Repository<T extends AbstractModel> {
         return (Session) JPA.em().getDelegate();
     }
 
-    List<T> parseJson(String json);
+    List<T> parseJson(JsonNode jn);
     ArrayNode removeFromJson(JsonNode jn);
     ArrayNode updateFromJson(JsonNode jn);
 

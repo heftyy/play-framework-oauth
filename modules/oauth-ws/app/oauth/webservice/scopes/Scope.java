@@ -1,20 +1,19 @@
 package oauth.webservice.scopes;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 class Scope {
-    private String url;
-    private String method;
-    private String returns;
+    private String name;
     private String description;
+    private List<UrlPattern> urlPatterns = new ArrayList<>();
 
     public Scope() {
     }
 
-    public Scope(String url, String method, String returns, String description) {
-        this.url = url;
-        this.method = method;
-        this.returns = returns;
+    public Scope(String name, String description) {
+        this.name = name;
         this.description = description;
     }
 
@@ -23,37 +22,20 @@ class Scope {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Scope scope = (Scope) o;
-        return Objects.equals(url, scope.url) &&
-                Objects.equals(method, scope.method);
+        return Objects.equals(name, scope.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, method);
+        return Objects.hash(name);
     }
 
-    public String getUrl() {
-        return url;
+    public String getName() {
+        return name;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public String getReturns() {
-        return returns;
-    }
-
-    public void setReturns(String returns) {
-        this.returns = returns;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -62,5 +44,13 @@ class Scope {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<UrlPattern> getUrlPatterns() {
+        return urlPatterns;
+    }
+
+    public void setUrlPatterns(List<UrlPattern> urlPatterns) {
+        this.urlPatterns = urlPatterns;
     }
 }

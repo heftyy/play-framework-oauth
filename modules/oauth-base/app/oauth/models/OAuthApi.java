@@ -2,6 +2,7 @@ package oauth.models;
 
 import common.models.AbstractModel;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class OAuthApi extends AbstractModel {
@@ -10,9 +11,24 @@ public class OAuthApi extends AbstractModel {
 	private String name;
 	private String domain;
 	private String scopeRequestUrl;
-	private boolean onGlobally;
+	private boolean enabled;
 	private Set<OAuthClient> clients;
-	private Set<OAuthLevel> levels;
+	private Set<OAuthScope> scopes;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OAuthApi oAuthApi = (OAuthApi) o;
+        return Objects.equals(id, oAuthApi.id) &&
+                Objects.equals(name, oAuthApi.name) &&
+                Objects.equals(domain, oAuthApi.domain);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, domain);
+    }
 
     public Long getId() {
         return id;
@@ -46,12 +62,12 @@ public class OAuthApi extends AbstractModel {
         this.scopeRequestUrl = scopeRequestUrl;
     }
 
-    public boolean isOnGlobally() {
-        return onGlobally;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setOnGlobally(boolean onGlobally) {
-        this.onGlobally = onGlobally;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Set<OAuthClient> getClients() {
@@ -62,11 +78,11 @@ public class OAuthApi extends AbstractModel {
         this.clients = clients;
     }
 
-    public Set<OAuthLevel> getLevels() {
-        return levels;
+    public Set<OAuthScope> getScopes() {
+        return scopes;
     }
 
-    public void setLevels(Set<OAuthLevel> levels) {
-        this.levels = levels;
+    public void setScopes(Set<OAuthScope> scopes) {
+        this.scopes = scopes;
     }
 }

@@ -1,14 +1,14 @@
 package oauth.messages;
 
-public class WebServiceValidateRequest extends BaseMessage {
+public class WSValidateRequest extends BaseMessage {
     private String accessToken;
     private String requestedScope;
     private String domain;
 
-    public WebServiceValidateRequest() {
+    public WSValidateRequest() {
     }
 
-    public WebServiceValidateRequest(String accessToken, String requestedScope, String domain) {
+    public WSValidateRequest(String accessToken, String requestedScope, String domain) {
         this.accessToken = accessToken;
         this.requestedScope = requestedScope;
         this.domain = domain;

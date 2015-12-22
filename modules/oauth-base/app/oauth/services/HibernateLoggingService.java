@@ -21,6 +21,6 @@ public class HibernateLoggingService implements LoggingService {
 
     @Override
     public void saveLog(String type, AbstractModel data) {
-        saveLog(type, data.getJson().toString());
+        saveLog(type, data == null ? null : data.getJson().toString());
     }
 }

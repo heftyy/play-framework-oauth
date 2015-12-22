@@ -3,14 +3,14 @@
 "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="oauth.models.OAuthScope" table="oauth_scopes" schema="oauth">
+	<class name="oauth.models.OAuthUrlPattern" table="oauth_url_pattern" schema="oauth">
 		
 		<id name="id" type="long" column="id">
 			<generator class="identity" />
 		</id>
 
-		<property name="scopeUrl">
-			<column name="scope_url"/>
+		<property name="pattern">
+			<column name="pattern"/>
 		</property>
 
 		<property name="method">
@@ -25,15 +25,7 @@
 			<column name="arguments"/>
 		</property>
 		
-		<property name="levelName">
-			<column name="level"/>
-		</property>
-		
-		<property name="apiId">
-			<column name="api_id"/>
-		</property>
-		
-		<many-to-one name="level" class="oauth.models.OAuthLevel" not-null="true">
+		<many-to-one name="scope" class="oauth.models.OAuthScope" not-null="true">
 			<column name="level_id"/>
 		</many-to-one>
 

@@ -18,7 +18,7 @@ GET         /client/get                     oauth.controllers.COAuthClients.clie
 GET         /client/update                  oauth.controllers.COAuthClients.updateClients(json: String)
 GET         /client/remove                  oauth.controllers.COAuthClients.removeClients(json: String)
 
-GET         /level/:apiId                   oauth.controllers.COAuthLevels.levelsForApi(apiId: Long)
-GET         /level/:apiId/:clientId         oauth.controllers.COAuthLevels.levelsForApiAndClient(apiId: Long, clientId: Long)
-GET         /level/update                   oauth.controllers.COAuthLevels.updateLevels(json: String)
-GET         /getscopes/:apiId               oauth.controllers.COAuthLevels.downloadScopes(apiId: Long)
+GET         /scope/:apiId                   oauth.controllers.COauthScopes.scopesForApi(apiId: Long)
+GET         /scope/:apiId/:clientId         oauth.controllers.COauthScopes.scopesForApiAndClient(apiId: Long, clientId: Long)
+GET         /scope/update                   oauth.controllers.COauthScopes.updateScopes(json: String)
+GET         /getscopes/:apiId               oauth.controllers.COauthScopes.downloadScopes(apiId: Long)

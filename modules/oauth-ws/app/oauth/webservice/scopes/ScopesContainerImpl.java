@@ -11,62 +11,50 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class ScopesContainerImpl implements ScopesContainer {
-    private List<Level> levels = new ArrayList<>();
-    private boolean scopesLoaded = false;
+    private List<Scope> scopes = new ArrayList<>();
+    private boolean ready = false;
 
     @Override
     public boolean checkIfClientAllowed(Accessor accessor, String scope) {
-        List<String> levelsAllowed = accessor.getAllowedLevels();
-        List<String> webserviceLevels = findLevelsForScope(scope);
+        List<String> scopesAllowed = accessor.getAllowedScopes();
+        List<String> wsScopes = findScopesForUrlPattern(scope);
 
-        for (String levelAllowed : levelsAllowed) {
-            if (webserviceLevels.contains(levelAllowed)) return true;
+        for (String scopeAllowed : scopesAllowed) {
+            if (wsScopes.contains(scopeAllowed)) return true;
         }
 
         return false;
     }
 
     @Override
-    public List<String> findLevelsForScope(String requestedScope) {
-        List<String> result = new ArrayList<>();
-        for (Level level : levels) {
-            result.addAll(level.getScopeList().stream().
-                    filter(scope -> ScopesStringCompare.compareStringsRegex(requestedScope, scope.getUrl())).
-                    map(scope -> level.getName()).
-                    collect(Collectors.toList()));
-        }
-        return result;
+    public void addScope(String name, String description) {
+        Scope scope = new Scope(name, description);
+        if (scopes.contains(scope)) return;
+
+        scopes.add(scope);
     }
 
     @Override
-    public void addLevel(String name, String description) {
-        Level level = new Level(name, description);
-        if (levels.contains(level)) return;
+    public void addUrlPattern(String scopeName, String urlPattern, String description, String method, String returns) {
+        scopes.stream().
+                filter(scope -> scope.getName().equals(scopeName)).
+                forEach(scope -> {
+                    UrlPattern pattern = new UrlPattern(urlPattern, method, returns, description);
+                    if (scope.getUrlPatterns().contains(pattern)) return;
 
-        levels.add(level);
-    }
-
-    @Override
-    public void addScope(String levelName, String url, String description, String method, String returns) {
-        levels.stream().
-                filter(level -> level.getName().equals(levelName)).
-                forEach(level -> {
-                    Scope scope = new Scope(url, method, returns, description);
-                    if (level.getScopeList().contains(scope)) return;
-
-                    level.getScopeList().add(scope);
+                    scope.getUrlPatterns().add(pattern);
                 }
         );
     }
 
     @Override
-    public boolean removeScope(String levelName, String url) {
+    public boolean removeUrlPattern(String scopeName, String urlPattern) {
         boolean result = false;
 
-        for (Level level : levels) {
-            for (Iterator<Scope> iterScope = level.getScopeList().iterator(); iterScope.hasNext(); ) {
-                Scope scope = iterScope.next();
-                if (scope.getUrl().equals(url)) {
+        for (Scope scope : scopes) {
+            for (Iterator<UrlPattern> iterScope = scope.getUrlPatterns().iterator(); iterScope.hasNext(); ) {
+                UrlPattern pattern = iterScope.next();
+                if (pattern.getPattern().equals(urlPattern)) {
                     iterScope.remove();
                     result = true;
                 }
@@ -77,12 +65,12 @@ public class ScopesContainerImpl implements ScopesContainer {
     }
 
     @Override
-    public boolean removeLevel(String levelName) {
+    public boolean removeScope(String scopeName) {
         boolean result = false;
-        for (Iterator<Level> iterLevel = levels.iterator(); iterLevel.hasNext(); ) {
-            Level level = iterLevel.next();
-            if (level.getName().equals(levelName)) {
-                iterLevel.remove();
+        for (Iterator<Scope> iterScope = scopes.iterator(); iterScope.hasNext(); ) {
+            Scope scope = iterScope.next();
+            if (scope.getName().equals(scopeName)) {
+                iterScope.remove();
                 result = true;
             }
         }
@@ -90,17 +78,33 @@ public class ScopesContainerImpl implements ScopesContainer {
     }
 
     @Override
-    public List<Level> getLevels() {
-        return levels;
+    public void setScopes(List<Scope> scopes) {
+        this.scopes = scopes;
     }
 
     @Override
-    public boolean isScopesLoaded() {
-        return scopesLoaded;
+    public List<Scope> getScopes() {
+        return scopes;
     }
 
     @Override
-    public void setScopesLoaded(boolean scopesLoaded) {
-        this.scopesLoaded = scopesLoaded;
+    public boolean isReady() {
+        return ready;
+    }
+
+    @Override
+    public void setReady(boolean ready) {
+        this.ready = ready;
+    }
+
+    private List<String> findScopesForUrlPattern(String requestedScope) {
+        List<String> result = new ArrayList<>();
+        for (Scope scope : scopes) {
+            result.addAll(scope.getUrlPatterns().stream().
+                    filter(urlPattern -> ScopesStringCompare.compareStringsRegex(requestedScope, urlPattern.getPattern())).
+                    map(urlPattern -> scope.getName()).
+                    collect(Collectors.toList()));
+        }
+        return result;
     }
 }

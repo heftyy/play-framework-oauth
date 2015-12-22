@@ -3,12 +3,12 @@
 <div id="client-list"></div>
 
 <div style="height: 0px; overflow: hidden">
-	<div id="oauth-scopes-window">
-		<form id="oauth-scopes-form">
-			<div id="oauth-scopes-treeview"> </div>
+	<div id="oauth-urlPatterns-window">
+		<form id="oauth-urlPatterns-form">
+			<div id="oauth-urlPatterns-treeview"> </div>
 		</form>
-		<a class="k-button k-button-icontext save-scopes" href="#">Save</a>
-		<a class="k-button k-button-icontext download-scopes" href="#">Download from webservice</a>
+		<a class="k-button k-button-icontext save-urlPatterns" href="#">Save</a>
+		<a class="k-button k-button-icontext download-urlPatterns" href="#">Download from webservice</a>
 	</div>
 </div>
 
@@ -25,7 +25,7 @@
 						<label>UUID:</label> #= UUID #
 					</li>
 					<li>
-						<label>Key:</label> <a href="#=jsRoutes.oauth.COAuthConsole.downloadKey(UUID).url#">Download</a>
+						<label>Key:</label> <a href="#=jsRoutes.oauth.COAuthConsole.downloadKey(UUID).pattern#">Download</a>
 					</li>
 					<li>
 						<label>Passowrd:</label> #= password #
@@ -40,12 +40,12 @@
 	</div>
 </script>
 
-<script type="text/kendo-ui-template" id="scopes-template">
-    # if (!item.scopes) { #
-        #: item.scopeUrl #
+<script type="text/kendo-ui-template" id="urlPatterns-template">
+    # if (!item.urlPatterns) { #
+        #: item.pattern #
     # } else { #
-    	<input type="checkbox" name="levels[]" value="#: item.compositeId.level #" # if (item.userAllowed) { # checked="checked" # } #/>
-    	#: item.compositeId.level #
+    	<input type="checkbox" name="urlPatterns[]" value="#: item.compositeId.scope #" # if (item.userAllowed) { # checked="checked" # } #/>
+    	#: item.compositeId.scope #
 	# } #
 </script>
 

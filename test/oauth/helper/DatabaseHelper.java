@@ -1,11 +1,13 @@
-package oauth;
+package oauth.helper;
 
 import com.google.common.collect.Sets;
+import oauth.console.ApiTest;
+import oauth.console.ClientTest;
 import oauth.models.OAuthApi;
 import oauth.models.OAuthClient;
 import play.db.jpa.JPA;
 
-public class PrepareDatabase {
+public class DatabaseHelper {
 
     public static void prepareDatabase() {
         JPA.withTransaction(() -> {
@@ -13,7 +15,7 @@ public class PrepareDatabase {
             OAuthApi api = ApiTest.getApiWithAllScope();
 
             client.setApis(Sets.newHashSet(api));
-            client.setLevels(api.getLevels());
+            client.setScopes(api.getScopes());
 
             JPA.em().persist(client);
         });
