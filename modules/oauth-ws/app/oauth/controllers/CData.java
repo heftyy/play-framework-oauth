@@ -10,22 +10,36 @@ import play.mvc.Result;
 public class CData extends Controller {
 
     @Restrict(value = @Group({"test1"}), handlerKey = "oauth")
-    public Result data1() {
+    public Result data1Get() {
         ObjectNode on = Json.newObject();
         on.put("data", "ws_data1");
         return ok(on);
     }
 
     @Restrict(value = @Group({"test2"}), handlerKey = "oauth")
-    public Result data2() {
+    public Result data2Get() {
         ObjectNode on = Json.newObject();
         on.put("data", "ws_data2");
         return ok(on);
     }
 
-    public Result data3() {
+    public Result data3Get() {
         ObjectNode on = Json.newObject();
         on.put("data", "ws_data3");
+        return ok(on);
+    }
+
+    @Restrict(value = @Group({"test1"}), handlerKey = "oauth")
+    public Result data1Post() {
+        ObjectNode on = Json.newObject();
+        on.put("data", "ws_data1");
+        return ok(on);
+    }
+
+    @Restrict(value = @Group({"test2"}), handlerKey = "oauth")
+    public Result data2Post() {
+        ObjectNode on = Json.newObject();
+        on.put("data", "ws_data2");
         return ok(on);
     }
 

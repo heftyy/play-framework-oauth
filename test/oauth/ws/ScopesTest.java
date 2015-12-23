@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ScopesTest extends GenericFakeAppTest {
@@ -55,6 +56,19 @@ public class ScopesTest extends GenericFakeAppTest {
 
         assertTrue(scopesContainer.isReady());
         assertTrue(scopesContainer.getScopes().size() == 1);
+        assertTrue(scopesContainer.getScopes().get(0).getName().equals("test1"));
+    }
+
+    @Test
+    public void defaultScopes() {
+        ScopesLoader scopesLoader = injector.instanceOf(ScopesLoader.class);
+        scopesLoader.load("test/not_scopes.json");
+
+        ScopesContainer scopesContainer = injector.instanceOf(ScopesContainer.class);
+
+        assertFalse(scopesContainer.isReady());
+        assertTrue(scopesContainer.getScopes().size() == 1);
+        assertTrue(scopesContainer.getScopes().get(0).getName().equals("ALL"));
     }
 
     @Test

@@ -1,10 +1,8 @@
 package oauth.client;
 
-import oauth.accessor.AccessToken;
 import oauth.helper.DatabaseHelper;
 import oauth.helper.RepositoryHelper;
 import oauth.messages.AccessTokenSuccess;
-import oauth.models.OAuthApi;
 import oauth.models.OAuthClient;
 import oauth.services.GenerateKeyService;
 import org.junit.Test;
@@ -15,9 +13,7 @@ import test.GenericFakeAppTest;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
-import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static play.test.Helpers.running;
 import static play.test.Helpers.testServer;
@@ -38,37 +34,6 @@ public class GetAccessTokenTest extends GenericFakeAppTest {
             e.printStackTrace();
             return null;
         }
-    }
-
-    @Test
-    public void serializeAccessToken() {
-        running(fakeApp, () -> {
-            DatabaseHelper.prepareDatabase();
-
-            RepositoryHelper repositoryHelper = Play.application().injector().instanceOf(RepositoryHelper.class);
-
-            AccessToken accessToken = null;
-            try {
-                accessToken = JPA.withTransaction(() -> {
-                    OAuthApi api = repositoryHelper.apiRepository.findByField("domain", "localhost:9000");
-
-                    return new AccessToken(
-                            "123131312",
-                            UUID.randomUUID().toString(),
-                            System.currentTimeMillis() + 150000,
-                            "Bearer",
-                            api);
-                });
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
-            }
-
-            assertNotNull(accessToken);
-            assertNotNull(accessToken.getJson());
-
-            assertEquals(accessToken.getAccessorId(), accessToken.getMessage().getAccessorId());
-            assertEquals(accessToken.getToken(), accessToken.getMessage().getAccessToken());
-        });
     }
 
     @Test

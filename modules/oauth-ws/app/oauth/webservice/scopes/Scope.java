@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-class Scope {
+public class Scope {
     private String name;
     private String description;
     private List<UrlPattern> urlPatterns = new ArrayList<>();

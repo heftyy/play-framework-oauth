@@ -16,8 +16,9 @@ public class PlayWSOAuthClient implements OAuthApiClient {
     private final String accessorId;
     private final String domain;
     private final SigningService signingService;
+    private String token;
 
-    private static final int max_retries = 2;
+    private static final int max_retries = 1;
 
     private static final Configuration CONFIG = play.Configuration.root().getConfig("oauth-client");
 
@@ -36,15 +37,16 @@ public class PlayWSOAuthClient implements OAuthApiClient {
     }
 
     public WSResponse doGet(String scopeUrl) throws Exception {
-        return doGet(scopeUrl, null, 0);
+        return doGet(scopeUrl, 0);
     }
 
     public WSResponse doPost(String scopeUrl, String args) throws Exception {
-        return doPost(scopeUrl, args, null, 0);
+        return doPost(scopeUrl, args, 0);
     }
 
-    private WSResponse doGet(String scopeUrl, String token, int current_retries) throws Exception {
-        if (!scopeUrl.startsWith("/")) scopeUrl = "/" + scopeUrl;
+    private WSResponse doGet(String scopeUrl, int current_retries) throws Exception {
+        if(this.token == null) token = getAccessToken(scopeUrl).getAccessToken();
+
         String url = this.getServiceAddress(scopeUrl);
 
         Promise<WSResponse> ret = WS.url(url).
@@ -58,15 +60,18 @@ public class PlayWSOAuthClient implements OAuthApiClient {
             return response;
         } else if (response.getStatus() == Http.Status.FORBIDDEN) {
             AccessTokenSuccess tokenMessage = getAccessToken(scopeUrl);
-            if (token != null && current_retries < max_retries) {
-                return this.doGet(scopeUrl, tokenMessage.getAccessToken(), ++current_retries);
+            if (tokenMessage != null && current_retries < max_retries) {
+                this.token = tokenMessage.getAccessToken();
+                return this.doGet(scopeUrl, ++current_retries);
             }
         }
-        return null;
+
+        return response;
     }
 
-    private WSResponse doPost(String scopeUrl, String args, String token, int current_retries) throws Exception {
-        if (!scopeUrl.startsWith("/")) scopeUrl = "/" + scopeUrl;
+    private WSResponse doPost(String scopeUrl, String args, int current_retries) throws Exception {
+        if(this.token == null) token = getAccessToken(scopeUrl).getAccessToken();
+
         String url = this.getServiceAddress(scopeUrl);
 
         Promise<WSResponse> ret = WS.url(url).
@@ -80,11 +85,13 @@ public class PlayWSOAuthClient implements OAuthApiClient {
             return response;
         } else if (response.getStatus() == Http.Status.FORBIDDEN) {
             AccessTokenSuccess tokenMessage = getAccessToken(scopeUrl);
-            if (token != null && current_retries < max_retries) {
-                return this.doPost(scopeUrl, args, tokenMessage.getAccessToken(), ++current_retries);
+            if (tokenMessage != null && current_retries < max_retries) {
+                this.token = tokenMessage.getAccessToken();
+                return this.doPost(scopeUrl, args, ++current_retries);
             }
         }
-        return null;
+
+        return response;
     }
 
     public AccessTokenSuccess getAccessToken(String requestedScope) throws Exception {

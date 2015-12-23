@@ -2,7 +2,7 @@ package oauth.webservice.scopes;
 
 import java.util.Objects;
 
-class UrlPattern {
+public class UrlPattern {
     private String pattern;
     private String method;
     private String returns;

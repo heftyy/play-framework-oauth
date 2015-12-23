@@ -2,6 +2,8 @@ package oauth.webservice.scopes;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import oauth.models.OAuthScope;
+import oauth.models.OAuthUrlPattern;
 import play.libs.Json;
 
 import javax.inject.Inject;
@@ -26,7 +28,11 @@ public class ScopesLoaderJson implements ScopesLoader {
             scopesContainer.setScopes(scopes);
             scopesContainer.setReady(true);
         } catch (IOException e) {
-            e.printStackTrace();
+            play.Logger.error("Couldn't load the scopes config file.", e.getMessage());
+
+            scopesContainer.addScope("ALL", "no scopes declared");
+            scopesContainer.addUrlPattern("ALL", "/*", "*", "*", "*");
+            scopesContainer.setReady(false);
         }
     }
 }

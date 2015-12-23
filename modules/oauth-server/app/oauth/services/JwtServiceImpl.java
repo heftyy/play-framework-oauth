@@ -48,7 +48,7 @@ public class JwtServiceImpl implements JwtService {
         PublicKey publicKey = getPublicKey(webToken.getClaim().getAccessorId());
 
         if (publicKey == null) {
-            System.err.println("Didn't find the key for user with id " + webToken.getClaim().getAccessorId());
+            play.Logger.error("Didn't find the key for user with id " + webToken.getClaim().getAccessorId());
             return false;
         }
 

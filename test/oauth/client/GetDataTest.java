@@ -17,13 +17,14 @@ import test.GenericFakeAppTest;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.running;
 import static play.test.Helpers.testServer;
 
 public class GetDataTest extends GenericFakeAppTest {
 
     @Test
-    public void authorizeTest() {
+    public void clientGetTest() {
         running(testServer(9000, fakeApp), () -> {
             DatabaseHelper.prepareDatabase();
 
@@ -34,34 +35,66 @@ public class GetDataTest extends GenericFakeAppTest {
 
             JPA.withTransaction(() -> {
                 OAuthClient client = repositoryHelper.clientRepository.findByField("id", 1L, "apis", "scopes", "scopes.urlPatterns");
-                AccessTokenSuccess token = GetAccessTokenTest.getAccessToken(client, domain, "/test", keyService.getSecretKeyPath(client.getAccessorId()));
 
-                assertNotNull(token);
+                OAuthApiClient apiClient = new PlayWSOAuthClient(
+                        client.getPassword(),
+                        client.getAccessorId(),
+                        domain,
+                        keyService.getSecretKeyPath(client.getAccessorId())
+                );
 
-                { // should work
-                    F.Promise<WSResponse> ret = WS.url("http://localhost:9000/oauth/ws/data1").
-                            setHeader("Content-type", "application/json").
-                            setHeader("Authorization", PlayWSOAuthClient.getAuthorizationHeader(token.getAccessToken())).
-                            get();
-
-                    WSResponse response = ret.get(100000);
+                { // OK
+                    WSResponse response = apiClient.doGet("/oauth/ws/data1");
 
                     assertTrue(response.getStatus() == Http.Status.OK);
-                    assertTrue(response.getBody().contains("ws_data1"));
+                    assertTrue(response.getBody().contains("ws_data"));
                 }
 
-                { // should fail
-                    F.Promise<WSResponse> ret = WS.url("http://localhost:9000/oauth/ws/data2").
-                            setHeader("Content-type", "application/json").
-                            setHeader("Authorization", PlayWSOAuthClient.getAuthorizationHeader(token.getAccessToken())).
-                            get();
-
-                    WSResponse response = ret.get(100000);
+                { // FAIL
+                    WSResponse response = apiClient.doGet("/oauth/ws/data2");
 
                     assertFalse(response.getStatus() == Http.Status.OK);
-                    assertFalse(response.getBody().contains("ws_data2"));
+                    assertFalse(response.getBody().contains("ws_data"));
                 }
             });
         });
     }
+
+    @Test
+    public void clientPostTest() {
+        running(testServer(9000, fakeApp), () -> {
+            DatabaseHelper.prepareDatabase();
+
+            String domain = "localhost:9000";
+
+            RepositoryHelper repositoryHelper = Play.application().injector().instanceOf(RepositoryHelper.class);
+            GenerateKeyService keyService = Play.application().injector().instanceOf(GenerateKeyService.class);
+
+            JPA.withTransaction(() -> {
+                OAuthClient client = repositoryHelper.clientRepository.findByField("id", 1L, "apis", "scopes", "scopes.urlPatterns");
+
+                OAuthApiClient apiClient = new PlayWSOAuthClient(
+                        client.getPassword(),
+                        client.getAccessorId(),
+                        domain,
+                        keyService.getSecretKeyPath(client.getAccessorId())
+                );
+
+                { // OK
+                    WSResponse response = apiClient.doPost("/oauth/ws/data1", "{}");
+
+                    assertTrue(response.getStatus() == Http.Status.OK);
+                    assertTrue(response.getBody().contains("ws_data"));
+                }
+
+                { // FAIL
+                    WSResponse response = apiClient.doPost("/oauth/ws/data2", "{}");
+
+                    assertFalse(response.getStatus() == Http.Status.OK);
+                    assertFalse(response.getBody().contains("ws_data"));
+                }
+            });
+        });
+    }
+
 }

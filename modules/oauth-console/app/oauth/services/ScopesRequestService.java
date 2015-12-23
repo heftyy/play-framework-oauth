@@ -101,8 +101,9 @@ public class ScopesRequestService {
 
     private String getScopesRequestUrl(Long apiId) {
         OAuthApi api = apiRepository.findById(apiId);
-        String url = api.getDomain() + api.getScopeRequestUrl();
+        if(api == null) return null;
 
+        String url = api.getDomain() + api.getScopeRequestUrl();
         if (!url.startsWith("http://")) {
             url = "http://" + url;
         }

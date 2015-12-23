@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
+@Deprecated
 public class AccessorsServiceWithMD5 implements AccessorsService {
     private Map<String, Accessor> accessors = new HashMap<>();
     private static Configuration config = Configuration.root().getConfig("oauth-ws");

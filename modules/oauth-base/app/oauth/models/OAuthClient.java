@@ -6,7 +6,6 @@ import org.joda.time.DateTime;
 import java.util.Set;
 
 public class OAuthClient extends AbstractModel {
-
     private Long id;
 	private String name;
 	private String accessorId;
