@@ -22,3 +22,11 @@ GET         /scope/:apiId                   oauth.controllers.COauthScopes.scope
 GET         /scope/:apiId/:clientId         oauth.controllers.COauthScopes.scopesForApiAndClient(apiId: Long, clientId: Long)
 GET         /scope/update                   oauth.controllers.COauthScopes.updateScopes(json: String)
 GET         /getscopes/:apiId               oauth.controllers.COauthScopes.downloadScopes(apiId: Long)
+
+
+# Versioned Assets
+GET         /vassets/*file                  oauth.controllers.Assets.versioned(path="/public/lib/oauth-console", file: Asset)
+# Unversioned Assets
+GET         /assets/*file                   oauth.controllers.Assets.at(path="/public/lib/oauth-console", file)
+# WebJars
+GET         /webjars/*file                  controllers.WebJarAssets.at(file)

@@ -1,12 +1,17 @@
-<div class="span12" style="margin-bottom: 20px;">
-	<div style="margin-bottom: 20px;">
+@main("OAuth console / dashboard") {
 
-		<div class="big-button-bar">
+    <div class="span12" style="margin-bottom: 20px;">
+        <div style="margin-bottom: 20px;">
 
-			<a class="button large" href="#@oauth.controllers.routes.COAuthApis.apiList()"> <i class="fa fa-bookmark"></i> <span>Lista Api</span> </a>
-			<a class="button large" href="#@oauth.controllers.routes.COAuthClients.clientList()"> <i class="fa fa-signal"></i> <span>Lista Klientów</span> </a>
+            <div class="big-button-bar">
 
-		</div>
+                <a class="button large" href="#@oauth.controllers.routes.COAuthApis.apiList()"> <i class="fa fa-bookmark"></i> <span>Lista Api</span> </a>
+                <a class="button large" href="#@oauth.controllers.routes.COAuthClients.clientList()"> <i class="fa fa-signal"></i> <span>Lista Klientów</span> </a>
 
-	</div>
-</div>
+            </div>
+
+        </div>
+    </div>
+
+}
+

@@ -8,8 +8,7 @@ libraryDependencies ++= Seq(
   javaJdbc,
   cache,
   javaWs,
-  "org.mockito" % "mockito-core" % "1.9.5" % "test",
-  "org.webjars" %% "webjars-play" % "2.4.0-1"
+  "org.mockito" % "mockito-core" % "1.9.5" % "test"
 )
 
 

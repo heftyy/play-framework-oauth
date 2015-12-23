@@ -7,6 +7,7 @@ scalaVersion := "2.11.6"
 libraryDependencies ++= Seq(
   javaWs,
   javaCore,
+  "org.webjars" %% "webjars-play" % "2.4.0-1",
   "org.webjars" % "jquery" % "2.1.4",
   "org.webjars" % "bootstrap" % "3.2.0",
   "org.webjars" % "momentjs" % "2.8.3",
