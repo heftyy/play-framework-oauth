@@ -7,12 +7,13 @@
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@oauth.controllers.routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@oauth.controllers.routes.Assets.versioned("images/favicon.png")">
+        <script type="text/javascript" src="@oauth.controllers.routes.COAuthConsole.javascriptRoutes().url"></script>
 
         <script>
         @Html(org.webjars.RequireJS.getSetupJavaScript(routes.WebJarAssets.at("").url))
         </script>
-            <script data-main="@oauth.controllers.routes.Assets.versioned("javascripts/main.js")" src="@routes.WebJarAssets.at(WebJarAssets.locate("require.min.js"))"></script>
-        </head>
+        <script data-main="@oauth.controllers.routes.Assets.versioned("javascripts/main.js")" src="@routes.WebJarAssets.at(WebJarAssets.locate("require.min.js"))"></script>
+    </head>
     <body>
         @content
     </body>

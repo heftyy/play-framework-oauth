@@ -5,7 +5,8 @@
 # \____(____  /____/ |__| |___|  /
 #           \/                 \/
 
-GET         /index                          oauth.controllers.COAuthConsole.index()
+GET         /                               oauth.controllers.COAuthConsole.index()
+GET         /js/routes                      oauth.controllers.COAuthConsole.javascriptRoutes()
 
 GET         /api/list                       oauth.controllers.COAuthApis.apiList()
 GET         /api/get                        oauth.controllers.COAuthApis.apis(json: String ?= null)
@@ -22,7 +23,6 @@ GET         /scope/:apiId                   oauth.controllers.COauthScopes.scope
 GET         /scope/:apiId/:clientId         oauth.controllers.COauthScopes.scopesForApiAndClient(apiId: Long, clientId: Long)
 GET         /scope/update                   oauth.controllers.COauthScopes.updateScopes(json: String)
 GET         /getscopes/:apiId               oauth.controllers.COauthScopes.downloadScopes(apiId: Long)
-
 
 # Versioned Assets
 GET         /vassets/*file                  oauth.controllers.Assets.versioned(path="/public/lib/oauth-console", file: Asset)
