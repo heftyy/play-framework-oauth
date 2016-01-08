@@ -1,6 +1,6 @@
 package oauth.messages;
 
-import common.models.AbstractModel;
+import common.models.JsonSerializable;
 
-public class BaseMessage extends AbstractModel {
+public class BaseMessage extends JsonSerializable {
 }

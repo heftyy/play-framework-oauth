@@ -11,17 +11,17 @@ public class OAuthScope extends AbstractModel {
 	private String description;
 	private DateTime addTime;
 	private DateTime modTime;
-    private OAuthApi api;
+    private OAuthWS ws;
     private Set<OAuthClient> clients;
 	private Set<OAuthUrlPattern> urlPatterns;
 
     public OAuthScope() {
     }
 
-    public OAuthScope(String name, String description, OAuthApi api) {
+    public OAuthScope(String name, String description, OAuthWS ws) {
         this.name = name;
         this.description = description;
-        this.api = api;
+        this.ws = ws;
     }
 
     public Long getId() {
@@ -64,12 +64,12 @@ public class OAuthScope extends AbstractModel {
         this.modTime = modTime;
     }
 
-    public OAuthApi getApi() {
-        return api;
+    public OAuthWS getWs() {
+        return ws;
     }
 
-    public void setApi(OAuthApi api) {
-        this.api = api;
+    public void setWs(OAuthWS ws) {
+        this.ws = ws;
     }
 
     public Set<OAuthClient> getClients() {

@@ -11,13 +11,13 @@ import play.mvc.Result;
 import javax.inject.Inject;
 import java.io.File;
 
-public class COAuthClients extends Controller {
+public class COAuthClient extends Controller {
 
     private final Repository<OAuthClient> clientRepository;
     private final GenerateKeyService generateKeyService;
 
     @Inject
-    public COAuthClients(Repository<OAuthClient> clientRepository, GenerateKeyService generateKeyService) {
+    public COAuthClient(Repository<OAuthClient> clientRepository, GenerateKeyService generateKeyService) {
         this.clientRepository = clientRepository;
         this.generateKeyService = generateKeyService;
     }
@@ -31,12 +31,12 @@ public class COAuthClients extends Controller {
 
     @Transactional
     public Result updateClients(String json) {
-        return ok(clientRepository.updateFromJson(Json.toJson(json)));
+        return ok(clientRepository.updateWithJson(Json.toJson(json)));
     }
 
     @Transactional
     public Result removeClients(String json) {
-        return ok(clientRepository.removeFromJson(Json.toJson(json)));
+        return ok(clientRepository.deleteWithJson(Json.toJson(json)));
     }
 
     @Transactional

@@ -34,7 +34,7 @@ public class GetDataTest extends GenericFakeAppTest {
             GenerateKeyService keyService = Play.application().injector().instanceOf(GenerateKeyService.class);
 
             JPA.withTransaction(() -> {
-                OAuthClient client = repositoryHelper.clientRepository.findByField("id", 1L, "apis", "scopes", "scopes.urlPatterns");
+                OAuthClient client = repositoryHelper.clientRepository.findByField("id", 1L, "webServices", "scopes", "scopes.urlPatterns");
 
                 OAuthApiClient apiClient = new PlayWSOAuthClient(
                         client.getPassword(),
@@ -71,7 +71,7 @@ public class GetDataTest extends GenericFakeAppTest {
             GenerateKeyService keyService = Play.application().injector().instanceOf(GenerateKeyService.class);
 
             JPA.withTransaction(() -> {
-                OAuthClient client = repositoryHelper.clientRepository.findByField("id", 1L, "apis", "scopes", "scopes.urlPatterns");
+                OAuthClient client = repositoryHelper.clientRepository.findByField("id", 1L, "webServices", "scopes", "scopes.urlPatterns");
 
                 OAuthApiClient apiClient = new PlayWSOAuthClient(
                         client.getPassword(),

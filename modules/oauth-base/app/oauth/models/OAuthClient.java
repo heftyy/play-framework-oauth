@@ -12,7 +12,7 @@ public class OAuthClient extends AbstractModel {
 	private String publicKey;
 	private String password;
 	private DateTime creationTime;
-	private Set<OAuthApi> apis;
+	private Set<OAuthWS> webServices;
 	private Set<OAuthScope> scopes;
 
     public Long getId() {
@@ -63,12 +63,12 @@ public class OAuthClient extends AbstractModel {
         this.creationTime = creationTime;
     }
 
-    public Set<OAuthApi> getApis() {
-        return apis;
+    public Set<OAuthWS> getWebServices() {
+        return webServices;
     }
 
-    public void setApis(Set<OAuthApi> apis) {
-        this.apis = apis;
+    public void setWebServices(Set<OAuthWS> webServices) {
+        this.webServices = webServices;
     }
 
     public Set<OAuthScope> getScopes() {

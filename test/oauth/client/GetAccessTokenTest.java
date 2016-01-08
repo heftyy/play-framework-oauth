@@ -47,7 +47,7 @@ public class GetAccessTokenTest extends GenericFakeAppTest {
             GenerateKeyService keyService = Play.application().injector().instanceOf(GenerateKeyService.class);
 
             JPA.withTransaction(() -> {
-                OAuthClient client = repositoryHelper.clientRepository.findByField("id", 1L, "apis", "scopes", "scopes.urlPatterns");
+                OAuthClient client = repositoryHelper.clientRepository.findByField("id", 1L, "webServices", "scopes", "scopes.urlPatterns");
                 AccessTokenSuccess token = getAccessToken(client, domain, "/test", keyService.getSecretKeyPath(client.getAccessorId()));
                 assertNotNull(token);
                 assertNotNull(token.getAccessToken());

@@ -3,7 +3,7 @@ package oauth.helper;
 import com.google.common.collect.Sets;
 import oauth.console.ApiTest;
 import oauth.console.ClientTest;
-import oauth.models.OAuthApi;
+import oauth.models.OAuthWS;
 import oauth.models.OAuthClient;
 import play.db.jpa.JPA;
 
@@ -12,10 +12,10 @@ public class DatabaseHelper {
     public static void prepareDatabase() {
         JPA.withTransaction(() -> {
             OAuthClient client = ClientTest.getClientWithKey();
-            OAuthApi api = ApiTest.getApiWithAllScope();
+            OAuthWS ws = ApiTest.getApiWithAllScope();
 
-            client.setApis(Sets.newHashSet(api));
-            client.setScopes(api.getScopes());
+            client.setWebServices(Sets.newHashSet(ws));
+            client.setScopes(ws.getScopes());
 
             JPA.em().persist(client);
         });

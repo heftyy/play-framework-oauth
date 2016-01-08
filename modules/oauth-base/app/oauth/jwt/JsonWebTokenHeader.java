@@ -1,10 +1,10 @@
 package oauth.jwt;
 
-import common.models.AbstractModel;
+import common.models.JsonSerializable;
 
 import java.util.Objects;
 
-public class JsonWebTokenHeader extends AbstractModel {
+public class JsonWebTokenHeader extends JsonSerializable {
     private String alg;
     private String type;
 

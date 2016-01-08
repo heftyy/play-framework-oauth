@@ -1,0 +1,1 @@
+INSERT INTO oauth.oauth_ws (enabled, name, domain, scope_request_url) VALUES (true, 'ws1', 'http://localhost:9000', '/oauth/ws/scopes');

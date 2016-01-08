@@ -3,8 +3,8 @@
 "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="oauth.models.OAuthApi" table="oauth_apis" schema="oauth">
-		<id name="id" type="long" column="api_id">
+	<class name="oauth.models.OAuthWS" table="oauth_ws" schema="oauth">
+		<id name="id" type="long" column="ws_id">
 			<generator class="identity" />
 		</id>
 		
@@ -24,13 +24,13 @@
 			<column name="scope_request_url"/>
 		</property>
 		
-		<set name="clients" table="oauth_client_api" schema="oauth">
-            <key column="api_id" not-null="true"/>
+		<set name="clients" table="oauth_client_ws" schema="oauth">
+            <key column="ws_id" not-null="true"/>
             <many-to-many column="client_id" class="oauth.models.OAuthClient"/>
         </set>
 
 		<set name="scopes" cascade="all">
-			<key column="api_id"/>
+			<key column="ws_id"/>
 			<one-to-many class="oauth.models.OAuthScope"/>
 		</set>
 	</class>

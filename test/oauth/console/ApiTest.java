@@ -1,6 +1,6 @@
 package oauth.console;
 
-import oauth.models.OAuthApi;
+import oauth.models.OAuthWS;
 import oauth.ws.ScopesTest;
 import org.junit.Test;
 import play.db.jpa.JPA;
@@ -12,8 +12,8 @@ import static play.test.Helpers.running;
 
 public class ApiTest extends GenericFakeAppTest {
 
-    public static OAuthApi getApiWithAllScope() {
-        OAuthApi a = new OAuthApi();
+    public static OAuthWS getApiWithAllScope() {
+        OAuthWS a = new OAuthWS();
         a.setName("test-api");
         a.setDomain("localhost:9000");
         a.setEnabled(true);
@@ -27,16 +27,16 @@ public class ApiTest extends GenericFakeAppTest {
     @Test
     public void saveApiTest() {
         running(fakeApp, () -> {
-            OAuthApi api = getApiWithAllScope();
-            assertNotNull(api);
+            OAuthWS ws = getApiWithAllScope();
+            assertNotNull(ws);
 
-            assertTrue(api.getDomain().equals("localhost:9000"));
-            assertTrue(api.getScopes().size() == 1);
-            assertTrue(api.getScopes().iterator().next().getUrlPatterns().size() == 2);
+            assertTrue(ws.getDomain().equals("localhost:9000"));
+            assertTrue(ws.getScopes().size() == 1);
+            assertTrue(ws.getScopes().iterator().next().getUrlPatterns().size() == 2);
 
             JPA.withTransaction(() -> {
-                JPA.em().persist(api);
-                assertNotNull(api.getId());
+                JPA.em().persist(ws);
+                assertNotNull(ws.getId());
             });
         });
     }

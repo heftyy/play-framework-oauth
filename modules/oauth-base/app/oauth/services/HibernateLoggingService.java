@@ -1,7 +1,7 @@
 package oauth.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import common.models.AbstractModel;
+import common.models.JsonSerializable;
 import oauth.models.OAuthLog;
 import org.joda.time.DateTime;
 import play.db.jpa.JPA;
@@ -20,7 +20,7 @@ public class HibernateLoggingService implements LoggingService {
     }
 
     @Override
-    public void saveLog(String type, AbstractModel data) {
+    public void saveLog(String type, JsonSerializable data) {
         saveLog(type, data == null ? null : data.getJson().toString());
     }
 }

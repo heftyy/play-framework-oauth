@@ -3,7 +3,7 @@ package oauth.server;
 import oauth.accessor.AccessToken;
 import oauth.helper.DatabaseHelper;
 import oauth.helper.RepositoryHelper;
-import oauth.models.OAuthApi;
+import oauth.models.OAuthWS;
 import oauth.services.TokenService;
 import org.junit.Test;
 import play.Play;
@@ -28,14 +28,14 @@ public class AccessTokenTest extends GenericFakeAppTest {
             AccessToken accessToken = null;
             try {
                 accessToken = JPA.withTransaction(() -> {
-                    OAuthApi api = repositoryHelper.apiRepository.findByField("domain", "localhost:9000");
+                    OAuthWS ws = repositoryHelper.apiRepository.findByField("domain", "localhost:9000");
 
                     return new AccessToken(
                             "123131312",
                             UUID.randomUUID().toString(),
                             System.currentTimeMillis() + 150000,
                             "Bearer",
-                            api);
+                            ws);
                 });
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
@@ -53,13 +53,13 @@ public class AccessTokenTest extends GenericFakeAppTest {
     public void checkAccessToken() {
         running(fakeApp, () -> {
             JPA.withTransaction(() -> {
-                OAuthApi api = new OAuthApi();
-                api.setName("test-api");
-                api.setDomain("localhost:9000");
-                api.setEnabled(true);
-                api.setScopeRequestUrl("/oauth/ws/scopes");
+                OAuthWS ws = new OAuthWS();
+                ws.setName("test-api");
+                ws.setDomain("localhost:9000");
+                ws.setEnabled(true);
+                ws.setScopeRequestUrl("/oauth/ws/scopes");
 
-                JPA.em().persist(api);
+                JPA.em().persist(ws);
 
                 TokenService tokenService = Play.application().injector().instanceOf(TokenService.class);
                 AccessToken accessToken = tokenService.createAccessToken("accessor1", System.currentTimeMillis(), "/oauth/ws/data", "localhost:9000");
@@ -69,7 +69,7 @@ public class AccessTokenTest extends GenericFakeAppTest {
                 // createAccessToken should return the existing token
                 assertEquals(accessToken, tokenService.createAccessToken("accessor1", System.currentTimeMillis() + 1000, "/oauth/ws/data", "localhost:9000"));
 
-                assertEquals(accessToken, new AccessToken("accessor1", accessToken.getToken(), accessToken.getExpiresAt(), accessToken.getType(), accessToken.getApi()));
+                assertEquals(accessToken, new AccessToken("accessor1", accessToken.getToken(), accessToken.getExpiresAt(), accessToken.getType(), accessToken.getWs()));
 
                 // assertTrue(tokenService.validateAccessToken());
             });

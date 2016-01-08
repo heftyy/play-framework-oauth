@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
+import com.google.inject.Key;
 import common.json.JsonSetup;
+import oauth.helper.GuiceHelper;
+import oauth.lifecycle.OnWsStart;
 import oauth.models.OAuthScope;
 import oauth.modules.OAuthBaseModule;
 import oauth.modules.OAuthServerModule;
@@ -15,7 +18,6 @@ import org.junit.Test;
 import play.inject.Injector;
 import play.inject.guice.GuiceInjectorBuilder;
 import play.libs.Json;
-import test.GenericFakeAppTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,11 +26,11 @@ import java.util.Set;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class ScopesTest extends GenericFakeAppTest {
+public class ScopesTest {
 
     Injector injector = new GuiceInjectorBuilder()
             .bindings(new OAuthBaseModule())
-            .bindings(new OAuthWebServiceModule())
+            .bindings(GuiceHelper.subtractBinding(new OAuthWebServiceModule(), Key.get(OnWsStart.class)))
             .bindings(new OAuthServerModule())
             .injector();
 

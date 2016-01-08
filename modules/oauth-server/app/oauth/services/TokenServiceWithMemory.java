@@ -2,7 +2,7 @@ package oauth.services;
 
 import common.repository.Repository;
 import oauth.accessor.AccessToken;
-import oauth.models.OAuthApi;
+import oauth.models.OAuthWS;
 import oauth.utils.ScopesStringCompare;
 
 import javax.inject.Inject;
@@ -17,12 +17,12 @@ public class TokenServiceWithMemory implements TokenService {
     private static String TOKEN_TYPE = "Bearer";
 
     private Map<String, AccessToken> accessTokens = new HashMap<>();
-    private Repository<OAuthApi> apiRepository;
+    private Repository<OAuthWS> wsRepository;
     private ScopesService scopesService;
 
     @Inject
-    public TokenServiceWithMemory(Repository<OAuthApi> apiRepository, ScopesService scopesService) {
-        this.apiRepository = apiRepository;
+    public TokenServiceWithMemory(Repository<OAuthWS> wsRepository, ScopesService scopesService) {
+        this.wsRepository = wsRepository;
         this.scopesService = scopesService;
     }
 
@@ -37,7 +37,7 @@ public class TokenServiceWithMemory implements TokenService {
                 if(accessToken.getExpiresAt() > System.currentTimeMillis()) {
                     return accessToken;
                 } else { // remove outdated tokens
-                    accessTokens.remove(getMapKey(accessToken.getAccessorId(), accessToken.getApi().getDomain()));
+                    accessTokens.remove(getMapKey(accessToken.getAccessorId(), accessToken.getWs().getDomain()));
                 }
             }
         }
@@ -51,7 +51,7 @@ public class TokenServiceWithMemory implements TokenService {
 
         if(accessToken != null &&
                 accessToken.getExpiresAt() > System.currentTimeMillis() &&
-                accessToken.getApi().getDomain().equals(domain)) {
+                accessToken.getWs().getDomain().equals(domain)) {
             return accessToken;
         } else {
             accessTokens.remove(getMapKey(accessorId, domain));
@@ -75,15 +75,15 @@ public class TokenServiceWithMemory implements TokenService {
         AccessToken accessToken = getAccessToken(accessorId, domain);
         if(accessToken != null) return accessToken;
 
-        OAuthApi api = apiRepository.findByField("domain", domain);
-        if(api == null) return null;
+        OAuthWS ws = wsRepository.findByField("domain", domain);
+        if(ws == null) return null;
 
         accessToken = new AccessToken(
                 accessorId,
                 UUID.randomUUID().toString(),
                 time + AccessToken.TOKEN_VALID_FOR_MILLISECONDS,
                 TOKEN_TYPE,
-                api);
+                ws);
 
         accessTokens.put(getMapKey(accessorId, domain), accessToken);
 

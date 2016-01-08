@@ -6,10 +6,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class OnStart {
+public class OnWsStart {
 
     @Inject
-    public OnStart(ScopesLoader scopesLoader) {
+    public OnWsStart(ScopesLoader scopesLoader) {
         scopesLoader.load("scopes.json");
     }
 }

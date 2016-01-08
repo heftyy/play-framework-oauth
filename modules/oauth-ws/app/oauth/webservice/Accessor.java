@@ -3,12 +3,12 @@ package oauth.webservice;
 import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Role;
 import be.objectify.deadbolt.core.models.Subject;
-import common.models.AbstractModel;
+import common.models.JsonSerializable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Accessor extends AbstractModel implements Subject {
+public class Accessor extends JsonSerializable implements Subject {
     protected String accessorId;
     protected String accessToken;
     protected List<SecurityRole> allowedScopes;

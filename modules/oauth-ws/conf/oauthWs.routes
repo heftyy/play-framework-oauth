@@ -1,4 +1,4 @@
-GET         /scopes                  oauth.controllers.COAuthWS.scopes()
+GET         /scopes                  oauth.controllers.ScopesWS.scopes()
 #POST        /auth                   oauth.controllers.COAuthWS.authorize()
 
 # just for testing

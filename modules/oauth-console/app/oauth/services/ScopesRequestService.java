@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import common.repository.Repository;
-import oauth.models.OAuthApi;
+import oauth.models.OAuthWS;
 import oauth.models.OAuthScope;
 import oauth.models.OAuthUrlPattern;
 import play.db.jpa.JPA;
@@ -18,16 +18,37 @@ import play.mvc.Http;
 import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class ScopesRequestService {
 
     private final Repository<OAuthScope> scopeRepository;
-    private final Repository<OAuthApi> apiRepository;
+    private final Repository<OAuthWS> wsRepository;
 
     @Inject
-    public ScopesRequestService(Repository<OAuthScope> scopeRepository, Repository<OAuthApi> apiRepository) {
+    public ScopesRequestService(Repository<OAuthScope> scopeRepository, Repository<OAuthWS> wsRepository) {
         this.scopeRepository = scopeRepository;
-        this.apiRepository = apiRepository;
+        this.wsRepository = wsRepository;
+    }
+
+    public Set<OAuthScope> getScopesSet(Long wsId) {
+        return Sets.newHashSet(getScopes(wsId));
+    }
+
+    public List<OAuthScope> getScopes(Long wsId) {
+        List<OAuthScope> scopes;
+
+        String url = getScopesRequestUrl(wsId);
+
+        if(url == null || url.length() == 0) {
+            scopes = Lists.newArrayList(getDefaultScope(wsId));
+        }
+        else {
+            scopes = getScopesFromWebService(url);
+            if(scopes == null || scopes.size() == 0) scopes = Lists.newArrayList(getDefaultScope(wsId));
+        }
+
+        return scopes;
     }
 
     /**
@@ -35,44 +56,33 @@ public class ScopesRequestService {
      * scopes was not specified, the method creates one scope 'ALL' and sets a
      * scope '/*' for it.
      *
-     * @param apiId int: Api(webservice) id in the database
+     * @param wsId int: Api(webservice) id in the database
      */
-    public JsonNode getScopesJson(Long apiId) {
-        removeOldScopes(apiId);
+    public JsonNode getScopesJson(Long wsId) {
+        removeOldScopes(wsId);
 
-        List<OAuthScope> scopes;
+        List<OAuthScope> scopes = getScopes(wsId);
 
-        String url = getScopesRequestUrl(apiId);
-
-        if(url == null || url.length() == 0) scopes = Lists.newArrayList(insertDefaultScope(apiId));
-        else {
-            scopes = getScopesFromWebService(url);
-            if(scopes == null || scopes.size() == 0) scopes = Lists.newArrayList(insertDefaultScope(apiId));
-        }
-
-        OAuthApi api = apiRepository.findById(apiId);
+        OAuthWS ws = wsRepository.findById(wsId);
 
         scopes.stream().forEach(scope -> {
-            scope.setApi(api);
-            JPA.em().persist(scope);
+            scope.setWs(ws);
         });
 
         return Json.toJson(scopes);
     }
 
-    public OAuthScope insertDefaultScope(Long apiId) {
+    public OAuthScope getDefaultScope(Long wsId) {
         OAuthScope defaultScope = scopeRepository.findByFields(ImmutableMap.of(
-                "api.id", apiId,
+                "ws.id", wsId,
                 "name", "ALL"));
 
         if (defaultScope != null) {
             return defaultScope;
         } else {
-            defaultScope = new OAuthScope("ALL", "default scope - all urls", apiRepository.findById(apiId));
+            defaultScope = new OAuthScope("ALL", "default scope - all urls", wsRepository.findById(wsId));
             OAuthUrlPattern scope = new OAuthUrlPattern("/*", "*", "*", "*", defaultScope);
             defaultScope.setUrlPatterns(Sets.newHashSet(scope));
-
-            JPA.em().persist(defaultScope);
 
             return defaultScope;
         }
@@ -89,21 +99,21 @@ public class ScopesRequestService {
         return Arrays.asList(Json.fromJson(jn, OAuthScope[].class));
     }
 
-    private void removeOldScopes(Long apiId) {
-        JPA.em().createQuery("DELETE FROM OAuthUrlPattern WHERE scope.id IN (SELECT id FROM OAuthScope WHERE api.id = ?1)").
-                setParameter(1, apiId).
+    private void removeOldScopes(Long wsId) {
+        JPA.em().createQuery("DELETE FROM OAuthUrlPattern WHERE scope.id IN (SELECT id FROM OAuthScope WHERE ws.id = ?1)").
+                setParameter(1, wsId).
                 executeUpdate();
 
-        JPA.em().createQuery("DELETE FROM OAuthScope WHERE api.id = ?1").
-                setParameter(1, apiId).
+        JPA.em().createQuery("DELETE FROM OAuthScope WHERE ws.id = ?1").
+                setParameter(1, wsId).
                 executeUpdate();
     }
 
-    private String getScopesRequestUrl(Long apiId) {
-        OAuthApi api = apiRepository.findById(apiId);
-        if(api == null) return null;
+    private String getScopesRequestUrl(Long wsId) {
+        OAuthWS ws = wsRepository.findById(wsId);
+        if(ws == null) return null;
 
-        String url = api.getDomain() + api.getScopeRequestUrl();
+        String url = ws.getDomain() + ws.getScopeRequestUrl();
         if (!url.startsWith("http://")) {
             url = "http://" + url;
         }

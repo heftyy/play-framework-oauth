@@ -15,5 +15,4 @@ define [ 'angular' ], (angular) ->
     if angular.isObject(value)
       if value.hasOwnProperty(property)
         return value[property]
-    return
   mod

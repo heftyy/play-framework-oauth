@@ -5,7 +5,7 @@
   # -- RequireJS config --
   requirejs.config({
     # Packages = top-level folders; loads a contained file named 'main.js"
-    packages: ['common', 'home', 'user', 'dashboard'],
+    packages: ['common', 'ws', 'scopes', 'clients'],
     shim: {
       'jsRoutes': {
         deps: [],
@@ -14,7 +14,8 @@
       }
     },
     paths: {
-      'jsRoutes': ['/oauth/console/js/routes?noext']
+      'jsRoutes': ['/oauth/console/js/routes?noext'],
+      'angular-bootstrap-confirm': ['angular-bootstrap-confirm.min']
     }
   });
 
@@ -22,7 +23,7 @@
     console.log(err)
 
   # Load the app. This is kept minimal so it doesn't need much updating.
-  require(['angular', 'angular-cookies', 'angular-route', 'jquery', 'bootstrap', './app'],
+  require(['angular', 'angular-cookies', 'angular-route', 'jquery', 'ui-bootstrap', 'ui-grid', 'angular-ui-router', './app'],
     (angular) ->
       angular.bootstrap(document, ['app'])
   ))(requirejs);

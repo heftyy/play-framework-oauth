@@ -5,10 +5,10 @@
 <html lang="en">
     <head>
         <title>@title</title>
-        <link rel="stylesheet" media="screen" href="/vassets/lib/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))" />
+        <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("ui-grid.css"))" />
         <link rel="stylesheet" media="screen" href="@oauth.controllers.routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@oauth.controllers.routes.Assets.versioned("images/favicon.png")">
-        <script type="text/javascript" src="@oauth.controllers.routes.COAuthConsole.javascriptRoutes().url"></script>
 
         <script>
         @Html(org.webjars.RequireJS.getSetupJavaScript(routes.WebJarAssets.at("").url))

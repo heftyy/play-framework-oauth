@@ -6,10 +6,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class OnStart {
+public class OnBaseStart {
 
     @Inject
-    public OnStart() {
+    public OnBaseStart() {
         JsonSetup.setup();
     }
 }

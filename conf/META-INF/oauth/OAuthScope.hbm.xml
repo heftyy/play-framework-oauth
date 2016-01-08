@@ -17,8 +17,8 @@
 		
 		<property name="modTime" column="mod_time" type="org.jadira.usertype.dateandtime.joda.PersistentDateTime"/>
 
-		<many-to-one name="api" class="oauth.models.OAuthApi">
-			<column name="api_id"/>
+		<many-to-one name="ws" class="oauth.models.OAuthWS">
+			<column name="ws_id"/>
 		</many-to-one>
 
 		<set name="clients" table="oauth_client_level" schema="oauth">

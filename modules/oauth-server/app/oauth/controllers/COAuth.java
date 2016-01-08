@@ -162,7 +162,7 @@ public class COAuth extends Controller {
                         accessToken.getToken(),
                         scopesService.getScopesFor(
                                 accessToken.getAccessorId(),
-                                accessToken.getApi().getDomain())
+                                accessToken.getWs().getDomain())
                 );
             } else {
                 response = new WSValidateResponse(false);

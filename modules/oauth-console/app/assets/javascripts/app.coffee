@@ -5,10 +5,10 @@
 # Splitting it into several RequireJS modules allows async loading. We cannot take full advantage
 # of RequireJS and lazy-load stuff because the angular modules have their own dependency system.
 
-define(['angular', 'home', 'user', 'dashboard'], (angular) ->
+define(['angular', 'ws', 'scopes', 'clients'], (angular) ->
   'use strict'
 
   # We must already declare most dependencies here (except for common), or the submodules' routes
   # will not be resolved
-  angular.module('app', ['oauthConsole.home', 'oauthConsole.user', 'oauthConsole.dashboard'])
+  angular.module('app', ['oauthConsole.ws', 'oauthConsole.scopes', 'oauthConsole.clients'])
 )

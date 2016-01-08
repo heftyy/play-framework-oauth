@@ -5,7 +5,7 @@ import common.models.AbstractModel;
 import java.util.Objects;
 import java.util.Set;
 
-public class OAuthApi extends AbstractModel {
+public class OAuthWS extends AbstractModel {
 
     private Long id;
 	private String name;
@@ -19,10 +19,10 @@ public class OAuthApi extends AbstractModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OAuthApi oAuthApi = (OAuthApi) o;
-        return Objects.equals(id, oAuthApi.id) &&
-                Objects.equals(name, oAuthApi.name) &&
-                Objects.equals(domain, oAuthApi.domain);
+        OAuthWS oAuthWS = (OAuthWS) o;
+        return Objects.equals(id, oAuthWS.id) &&
+                Objects.equals(name, oAuthWS.name) &&
+                Objects.equals(domain, oAuthWS.domain);
     }
 
     @Override

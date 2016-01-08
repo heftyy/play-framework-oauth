@@ -18,9 +18,9 @@
 		
 		<property name="password" column="passwd"/>
 		
-		<set name="apis" table="oauth_client_api" cascade="all" schema="oauth">
+		<set name="webServices" table="oauth_client_ws" cascade="all" schema="oauth">
             <key column="client_id" not-null="true"/>
-            <many-to-many column="api_id" class="oauth.models.OAuthApi"/>
+            <many-to-many column="ws_id" class="oauth.models.OAuthWS"/>
         </set>
         
         <set name="scopes" table="oauth_client_level" cascade="all" schema="oauth">

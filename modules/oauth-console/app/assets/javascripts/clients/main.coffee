@@ -10,9 +10,9 @@ define [
   './controllers'
 ], (angular, routes, controllers) ->
   'use strict'
-  mod = angular.module('oauthConsole.home', [
+  mod = angular.module('oauthConsole.clients', [
     'ngRoute'
-    'home.routes'
+    'clients.routes'
   ])
   mod.controller 'HeaderCtrl', controllers.HeaderCtrl
   mod.controller 'FooterCtrl', controllers.FooterCtrl

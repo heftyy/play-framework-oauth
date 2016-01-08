@@ -1,26 +1,26 @@
 package oauth.accessor;
 
-import common.models.AbstractModel;
+import common.models.JsonSerializable;
 import oauth.messages.AccessTokenSuccess;
-import oauth.models.OAuthApi;
+import oauth.models.OAuthWS;
 
 import java.util.Objects;
 
-public class AccessToken extends AbstractModel {
+public class AccessToken extends JsonSerializable {
     public static long TOKEN_VALID_FOR_MILLISECONDS = 60 * 60 * 1000; // 60 minutes
 
     private String accessorId;
     private String token;
     private String type;
     private Long expiresAt;
-    private OAuthApi api;
+    private OAuthWS ws;
 
-    public AccessToken(String accessorId, String token, Long expiresAt, String type, OAuthApi api) {
+    public AccessToken(String accessorId, String token, Long expiresAt, String type, OAuthWS ws) {
         this.accessorId = accessorId;
         this.token = token;
         this.expiresAt = expiresAt;
         this.type = type;
-        this.api = api;
+        this.ws = ws;
     }
 
     public AccessTokenSuccess getMessage() {
@@ -36,12 +36,12 @@ public class AccessToken extends AbstractModel {
                 Objects.equals(token, that.token) &&
                 Objects.equals(expiresAt, that.expiresAt) &&
                 Objects.equals(type, that.type) &&
-                Objects.equals(api, that.api);
+                Objects.equals(ws, that.ws);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accessorId, token, expiresAt, type, api);
+        return Objects.hash(accessorId, token, expiresAt, type, ws);
     }
 
     public String getAccessorId() {
@@ -76,11 +76,11 @@ public class AccessToken extends AbstractModel {
         this.type = type;
     }
 
-    public OAuthApi getApi() {
-        return api;
+    public OAuthWS getWs() {
+        return ws;
     }
 
-    public void setApi(OAuthApi api) {
-        this.api = api;
+    public void setWs(OAuthWS ws) {
+        this.ws = ws;
     }
 }

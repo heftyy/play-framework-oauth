@@ -7,14 +7,14 @@ import play.mvc.Result;
 
 import javax.inject.Inject;
 
-public class COAuthWS extends Controller {
+public class ScopesWS extends Controller {
     private static final String VALID = "valid";
     private static final String INVALID = "invalid";
 
     private final ScopesContainer scopesContainer;
 
     @Inject
-    public COAuthWS(ScopesContainer scopesContainer) {
+    public ScopesWS(ScopesContainer scopesContainer) {
         this.scopesContainer = scopesContainer;
     }
 

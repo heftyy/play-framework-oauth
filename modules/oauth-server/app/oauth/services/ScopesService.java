@@ -29,8 +29,8 @@ public class ScopesService {
     public Set<String> getScopesFor(String accessorId, String domain) {
         List<OAuthUrlPattern> scopes = scopeRepository.findWithRestrictions(Lists.newArrayList(
                 Restrictions.eq("clients.accessorId", accessorId),
-                Restrictions.eq("api.domain", domain)
-        ), "scope", "scope.api", "scope.clients");
+                Restrictions.eq("ws.domain", domain)
+        ), "scope", "scope.ws", "scope.clients");
 
         return scopes.stream().map(scope -> scope.getScope().getName()).collect(Collectors.toSet());
     }
@@ -38,8 +38,8 @@ public class ScopesService {
     public Set<String> getPatternsFor(String accessorId, String domain) {
         List<OAuthUrlPattern> scopes = scopeRepository.findWithRestrictions(Lists.newArrayList(
                 Restrictions.eq("clients.accessorId", accessorId),
-                Restrictions.eq("api.domain", domain)
-        ), "scope", "scope.api", "scope.clients");
+                Restrictions.eq("ws.domain", domain)
+        ), "scope", "scope.ws", "scope.clients");
 
         return scopes.stream().map(OAuthUrlPattern::getPattern).collect(Collectors.toSet());
     }

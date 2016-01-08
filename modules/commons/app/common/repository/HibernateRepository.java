@@ -37,7 +37,7 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     }
 
     @Override
-    public ArrayNode removeFromJson(JsonNode jn) {
+    public ArrayNode deleteWithJson(JsonNode jn) {
         ArrayNode models = (ArrayNode) jn.findPath("models");
         ArrayNode result = new ArrayNode(JsonNodeFactory.instance);
         for (JsonNode jsonObject : models) {
@@ -49,15 +49,23 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     }
 
     @Override
-    public ArrayNode updateFromJson(JsonNode jn) {
+    public ArrayNode updateWithJson(JsonNode jn) {
         ArrayNode models = (ArrayNode) jn.findPath("models");
         ArrayNode result = new ArrayNode(JsonNodeFactory.instance);
         for (JsonNode jsonObject : models) {
             AbstractModel dataObject = Json.fromJson(jsonObject, type);
-            getSession().saveOrUpdate(dataObject);
+            dataObject.save();
             result.add(dataObject.getJson());
         }
         return result;
+    }
+
+    @Override
+    public T delete(Long id) {
+        T obj = JPA.em().find(type, id);
+        if(obj != null) JPA.em().remove(obj);
+
+        return obj;
     }
 
     @Inject
@@ -82,14 +90,14 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     }
 
     @Override
-    public List<T> findWithRestrictions(List<Object> restrictions, String... aliases) {
+    public List<T> findWithRestrictions(List<?> restrictions, String... aliases) {
         Map<String, JoinType> map = new HashMap<>();
         Stream.of(aliases).forEach(alias -> map.put(alias, JoinType.LEFT_OUTER_JOIN));
         return findWithRestrictions(restrictions, map);
     }
 
     @Override
-    public List<T> findWithRestrictions(List<Object> restrictions, Map<String, JoinType> aliases) {
+    public List<T> findWithRestrictions(List<?> restrictions, Map<String, JoinType> aliases) {
         Criteria criteria = getSession().createCriteria(type);
 
         addAliases(criteria, aliases);
@@ -106,12 +114,10 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
         addAliases(criteria, aliases);
 
         ds.addRestrictionsCriteria(criteria, type);
-
         ds.addOrderCriteria(criteria);
         ds.paginateQuery(criteria);
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-
         return criteria.list();
     }
 
@@ -180,7 +186,7 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
 
     @Override
     @SuppressWarnings("unchecked")
-    public T findByFields(Map<String, Object> restrictions, String... aliases) {
+    public T findByFields(Map<String, ?> restrictions, String... aliases) {
         Criteria criteria = getSession().createCriteria(type);
         restrictions.forEach((key, value) -> criteria.add(Restrictions.eq(key, value)));
 
@@ -191,7 +197,7 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     }
 
     @Override
-    public T findOneWithRestrictions(List<Object> restrictions, String... aliases) {
+    public T findOneWithRestrictions(List<?> restrictions, String... aliases) {
         Criteria criteria = getSession().createCriteria(type);
         restrictions.stream()
                 .filter(restriction -> restriction instanceof Criterion)
@@ -204,12 +210,12 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     }
 
     private void addAliases(Criteria criteria, Map<String, JoinType> aliases) {
-        if(aliases == null) return;
+        if (aliases == null) return;
         aliases.forEach((k, v) -> {
             // if the alias contains a dot use the full alias as the left side and the part after the dot as the
             // right side, this lets you join multiple tables with references to other tables
             // eg. assignment.socket.devices
-            if(k.contains(".")) {
+            if (k.contains(".")) {
                 String rhs = k.split("\\.")[1];
                 criteria.createAlias(k, rhs, v);
             } else criteria.createAlias(k, k, v);
@@ -217,12 +223,12 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     }
 
     private void addAliases(Criteria criteria, String... aliases) {
-        if(aliases == null) return;
+        if (aliases == null) return;
         Arrays.stream(aliases).forEach(alias -> {
             // if the alias contains a dot use the full alias as the left side and the part after the dot as the
             // right side, this lets you join multiple tables with references to other tables
             // eg. assignment.socket.devices
-            if(alias.contains(".")) {
+            if (alias.contains(".")) {
                 String rhs = alias.split("\\.")[1];
                 criteria.createAlias(alias, rhs);
             } else criteria.createAlias(alias, alias);

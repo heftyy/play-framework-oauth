@@ -11,7 +11,6 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "1.9.5" % "test"
 )
 
-
 pipelineStages := Seq(digest, gzip)
 
 // Play provides two styles of routers, one expects its actions to be injected, the
