@@ -5,7 +5,7 @@
 <hibernate-mapping>
 	<class name="oauth.models.OAuthScope" table="oauth_scopes" schema="oauth">
 
-        <id name="id" type="long" column="level_id">
+        <id name="id" type="long" column="scope_id">
             <generator class="identity" />
         </id>
 
@@ -21,13 +21,13 @@
 			<column name="ws_id"/>
 		</many-to-one>
 
-		<set name="clients" table="oauth_client_level" schema="oauth">
-			<key column="level_id" not-null="true"/>
+		<set name="clients" table="oauth_client_scope" schema="oauth">
+			<key column="scope_id" not-null="true"/>
 			<many-to-many class="oauth.models.OAuthClient" column="client_id"/>
 		</set>
 
         <set name="urlPatterns" table="oauth_scopes" cascade="all" schema="oauth">
-            <key column="level_id"/>
+            <key column="scope_id"/>
             <one-to-many class="oauth.models.OAuthUrlPattern"/>
         </set>
 	</class>

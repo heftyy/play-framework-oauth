@@ -1,5 +1,5 @@
 ###*
-# Home routes.
+# WS routes.
 ###
 
 define [
@@ -8,12 +8,17 @@ define [
   'common'
 ], (angular, controllers) ->
   'use strict'
-  mod = angular.module('clients.routes', [ 'oauthConsole.common' ])
+  mod = angular.module('clients.routes', [ 'oauthConsole.common', 'ui.router' ])
   mod.config [
     '$routeProvider'
-    ($routeProvider) ->
-      $routeProvider.when('/',
-        templateUrl: 'vassets/javascripts/clients/list.html'
-        controller: controllers.ClientCtrl).otherwise templateUrl: 'vassets/javascripts/clients/notFound.html'
+    '$stateProvider'
+    ($routeProvider, $stateProvider) ->
+      $stateProvider.state('clientList', {
+        url: '/clients',
+        templateUrl: 'assets/javascripts/clients/list.html'
+        controller: controllers.ClientsCtrl
+      })
+
+      $routeProvider.otherwise templateUrl: 'assets/javascripts/common/notFound.html'
   ]
-  mod
+  return mod

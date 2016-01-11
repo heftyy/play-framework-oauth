@@ -63,8 +63,9 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     @Override
     public T delete(Long id) {
         T obj = JPA.em().find(type, id);
-        if(obj != null) JPA.em().remove(obj);
-
+        if(obj != null) {
+            JPA.em().remove(obj);
+        }
         return obj;
     }
 

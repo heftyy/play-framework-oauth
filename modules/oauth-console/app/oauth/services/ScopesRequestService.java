@@ -35,6 +35,13 @@ public class ScopesRequestService {
         return Sets.newHashSet(getScopes(wsId));
     }
 
+    /**
+     * Downloads scopes from the webservice, if the address for requesting
+     * scopes was not specified, the method creates one scope 'ALL' and sets a
+     * url pattern '/*' for it.
+     *
+     * @param wsId int: Api(webservice) id in the database
+     */
     public List<OAuthScope> getScopes(Long wsId) {
         List<OAuthScope> scopes;
 
@@ -48,28 +55,29 @@ public class ScopesRequestService {
             if(scopes == null || scopes.size() == 0) scopes = Lists.newArrayList(getDefaultScope(wsId));
         }
 
-        return scopes;
-    }
-
-    /**
-     * Downloads scopes from the webservice, if the address for requesting
-     * scopes was not specified, the method creates one scope 'ALL' and sets a
-     * scope '/*' for it.
-     *
-     * @param wsId int: Api(webservice) id in the database
-     */
-    public JsonNode getScopesJson(Long wsId) {
-        removeOldScopes(wsId);
-
-        List<OAuthScope> scopes = getScopes(wsId);
-
         OAuthWS ws = wsRepository.findById(wsId);
 
         scopes.stream().forEach(scope -> {
             scope.setWs(ws);
         });
 
-        return Json.toJson(scopes);
+        return scopes;
+    }
+
+    public List<OAuthScope> getScopesAndSave(Long wsId) {
+        List<OAuthScope> scopes = getScopes(wsId);
+
+        this.removeOldScopes(wsId);
+
+        scopes.stream().forEach(scope -> {
+            JPA.em().persist(scope);
+        });
+
+        return scopes;
+    }
+
+    public JsonNode getScopesJson(Long wsId) {
+        return Json.toJson(getScopes(wsId));
     }
 
     public OAuthScope getDefaultScope(Long wsId) {
@@ -99,7 +107,7 @@ public class ScopesRequestService {
         return Arrays.asList(Json.fromJson(jn, OAuthScope[].class));
     }
 
-    private void removeOldScopes(Long wsId) {
+    public void removeOldScopes(Long wsId) {
         JPA.em().createQuery("DELETE FROM OAuthUrlPattern WHERE scope.id IN (SELECT id FROM OAuthScope WHERE ws.id = ?1)").
                 setParameter(1, wsId).
                 executeUpdate();

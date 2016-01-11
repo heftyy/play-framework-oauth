@@ -1,7 +1,7 @@
 @main("OAuth console") {
 
     @*-- Header -- *@
-    <nav class="navbar navbar-default navbar-fixed-top basic-nav" data-ng-controller="HeaderCtrl" data-ng-cloak>
+    <nav class="navbar navbar-default navbar-fixed-top basic-nav" data-ng-cloak>
         <div class="container" data-ng-switch="!!user" data-ng-cloak>
             <a href="#/" class="navbar-brand">OAuth console</a>
             <a href="#/ws" class="navbar-brand">WS</a>
@@ -10,10 +10,10 @@
     </nav>
     @* -- Main Content -- *@
     <div class="container" data-ng-cloak>
-        <div data-ng-view></div>
+        <div ui-view></div>
     </div>
     @*-- Footer -- *@
-    <footer data-ng-controller="FooterCtrl">
+    <footer>
     </footer>
 }
 

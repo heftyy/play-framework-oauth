@@ -8,6 +8,8 @@ define [], ->
   ###* Controls the ws page ###
 
   WSCtrl = ($scope, $rootScope, $location, $log, wsService, uiGridConstants) ->
+    $log.log('ws list')
+
     wsService.list({}).then((list) ->
       $scope.gridOptions.data = list
     )
@@ -28,13 +30,14 @@ define [], ->
           name: 'Scopes',
           enableCellEdit: false,
           enableFiltering: false,
-          cellTemplate: '<a href="#/scopes/ws/{{ row.entity.id }}"><button class="btn btn-sm btn-info" ng-click="grid.appScope.wsScopes(row)">Scopes</button></a>'
+          cellTemplate: '<a href="#/ws/scopes/{{ row.entity.id }}"><button class="btn btn-sm btn-info">Scopes</button></a>'
         }
         {
           width: 65
           name: 'Delete',
           enableCellEdit: false,
           enableFiltering: false,
+          enableSorting: false,
           cellTemplate: '<button class="btn btn-sm btn-danger" mwl-confirm title="Delete webservice" message="Are you really <b>sure</b> you want to do this?" confirm-text="Yes" cancel-text="No" placement="bottom" on-confirm="grid.appScope.removeRow(row)" confirm-button-type="danger" cancel-button-type="default">Delete</button>'
         }
       ]
@@ -42,7 +45,7 @@ define [], ->
     $scope.saveRow = (rowEntity) ->
       promise = wsService.update(rowEntity).then((response) ->
         if !rowEntity.id && response && response.length == 1
-          rowEntity.id = response[0].id
+          rowEntity = response[0]
       )
       $scope.gridApi.rowEdit.setSavePromise(rowEntity, promise)
 
@@ -75,19 +78,6 @@ define [], ->
     '$log'
     'wsService'
     'uiGridConstants'
-  ]
-
-  ScopesCtrl = ($scope, $routeParams, $rootScope, $location, $log) ->
-    $scope.params = $routeParams
-    $log.log($scope.params)
-
-
-  ScopesCtrl.$inject = [
-    '$scope'
-    '$routeParams'
-    '$rootScope'
-    '$location'
-    '$log'
   ]
 
   return {

@@ -3,13 +3,21 @@ package oauth.controllers;
 import common.repository.Repository;
 import oauth.models.OAuthClient;
 import oauth.services.GenerateKeyService;
+import org.bouncycastle.operator.OperatorCreationException;
+import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
 import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.util.List;
 
 public class COAuthClient extends Controller {
 
@@ -30,22 +38,36 @@ public class COAuthClient extends Controller {
     }
 
     @Transactional
-    public Result updateClients(String json) {
-        return ok(clientRepository.updateWithJson(Json.toJson(json)));
+    @BodyParser.Of(BodyParser.Json.class)
+    public Result update() {
+        Http.RequestBody body = request().body();
+        List<OAuthClient> clients = clientRepository.parseJson(body.asJson());
+        for(OAuthClient client : clients) {
+            // generate keys for a new client
+            if(client.getId() == null) {
+                try {
+                    generateKeyService.generateKey(client);
+                } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | OperatorCreationException | InvalidKeyException | IOException | SignatureException | NoSuchProviderException e) {
+                    return internalServerError("Generating the private key failed");
+                }
+                JPA.em().persist(client);
+            } else {
+                JPA.em().merge(client);
+            }
+        }
+
+        return ok(Json.toJson(clients));
     }
 
     @Transactional
-    public Result removeClients(String json) {
-        return ok(clientRepository.deleteWithJson(Json.toJson(json)));
+    public Result delete(Long id) {
+        OAuthClient client = clientRepository.delete(id);
+        if(client != null) return ok(client.getJson());
+        else return badRequest("Already deleted");
     }
 
     @Transactional
-    public Result clientList() {
-        return ok(oauth.views.html.clientlist.render());
-    }
-
-    @Transactional
-    public Result clients(String json) {
+    public Result getList(String json) {
         return ok(Json.toJson((clientRepository.findAll())));
     }
 }

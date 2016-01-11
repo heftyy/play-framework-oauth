@@ -13,15 +13,14 @@ POST        /ws/update                    oauth.controllers.COAuthWS.update()
 DELETE      /ws/delete/:id                oauth.controllers.COAuthWS.delete(id: Long)
 
 GET         /client/key                   oauth.controllers.COAuthClient.downloadKey(uuid: String)
-GET         /client/list                  oauth.controllers.COAuthClient.clientList()
-GET         /client/get                   oauth.controllers.COAuthClient.clients(json: String ?= null)
-GET         /client/update                oauth.controllers.COAuthClient.updateClients(json: String)
-GET         /client/remove                oauth.controllers.COAuthClient.removeClients(json: String)
+GET         /client/list                  oauth.controllers.COAuthClient.getList(json: String ?= null)
+POST        /client/update                oauth.controllers.COAuthClient.update()
+DELETE      /client/delete/:id            oauth.controllers.COAuthClient.delete(id: Long)
 
-GET         /scope/:wsId                  oauth.controllers.COauthScope.scopesForWS(wsId: Long)
-GET         /scope/:wsId/:clientId        oauth.controllers.COauthScope.scopesForWSAndClient(wsId: Long, clientId: Long)
-GET         /scope/ws/get/:wsId           oauth.controllers.COauthScope.downloadScopes(wsId: Long)
-POST        /scope/allow                  oauth.controllers.COauthScope.updateScopes(json: String ?= null)
+GET         /scope/:wsId                  oauth.controllers.COAuthScope.scopesForWS(wsId: Long)
+GET         /scope/:wsId/:clientId        oauth.controllers.COAuthScope.scopesForWSAndClient(wsId: Long, clientId: Long)
+GET         /scope/ws/get/:wsId           oauth.controllers.COAuthScope.downloadScopes(wsId: Long)
+POST        /scope/allow                  oauth.controllers.COAuthScope.updateScopes(json: String ?= null)
 
 # Versioned Assets
 GET         /vassets/*file                oauth.controllers.Assets.versioned(path="/public/lib/oauth-console", file: Asset)

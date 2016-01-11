@@ -8,6 +8,7 @@ import oauth.models.OAuthClient;
 import oauth.models.OAuthScope;
 import oauth.services.ScopesRequestService;
 import org.hibernate.criterion.Restrictions;
+import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -19,14 +20,14 @@ import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.List;
 
-public class COauthScope extends Controller {
+public class COAuthScope extends Controller {
 
     private final ScopesRequestService scopesService;
     private final Repository<OAuthScope> scopeRepository;
     private final Repository<OAuthClient> clientRepository;
 
     @Inject
-    public COauthScope(ScopesRequestService scopesService, Repository<OAuthScope> scopeRepository, Repository<OAuthClient> clientRepository) {
+    public COAuthScope(ScopesRequestService scopesService, Repository<OAuthScope> scopeRepository, Repository<OAuthClient> clientRepository) {
         this.scopesService = scopesService;
         this.scopeRepository = scopeRepository;
         this.clientRepository = clientRepository;
@@ -39,7 +40,8 @@ public class COauthScope extends Controller {
      */
     @Transactional
     public Result downloadScopes(Long wsId) {
-        return ok(scopesService.getScopesJson(wsId));
+        List<OAuthScope> scopes = scopesService.getScopesAndSave(wsId);
+        return ok(Json.toJson(scopes));
     }
 
     @Transactional

@@ -23,7 +23,7 @@
     console.log(err)
 
   # Load the app. This is kept minimal so it doesn't need much updating.
-  require(['angular', 'angular-cookies', 'angular-route', 'jquery', 'ui-bootstrap', 'ui-grid', 'angular-ui-router', './app'],
+  require(['angular', 'angular-cookies', 'angular-route', 'jquery', 'ui-bootstrap-tpls', 'ui-grid', 'angular-ui-router', './app'],
     (angular) ->
       angular.bootstrap(document, ['app'])
   ))(requirejs);

@@ -2,6 +2,7 @@ package oauth.models;
 
 import common.models.AbstractModel;
 import org.joda.time.DateTime;
+import play.db.jpa.JPA;
 
 import java.util.Set;
 

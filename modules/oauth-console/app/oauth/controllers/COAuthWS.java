@@ -34,7 +34,9 @@ public class COAuthWS extends Controller {
 
     @Transactional
     public Result delete(Long id) {
-        return ok(Json.toJson(wsRepository.delete(id)));
+        OAuthWS ws = wsRepository.delete(id);
+        if(ws != null) return ok(ws.getJson());
+        else return badRequest("Already deleted");
     }
 
     @Transactional

@@ -1,19 +1,18 @@
-###*
-# Main, shows the start page and provides controllers for the header and the footer.
-# This the entry module which serves as an entry point so other modules only have to include a
-# single module.
-###
-
 define [
   'angular'
   './routes'
   './controllers'
-], (angular, routes, controllers) ->
+  './services',
+  'angular-bootstrap-confirm'
+], (angular, routes, controllers, services, bootstrapConfirm) ->
   'use strict'
   mod = angular.module('oauthConsole.clients', [
-    'ngRoute'
-    'clients.routes'
+    'ngRoute',
+    'clients.routes',
+    'clients.services',
+    'ui.bootstrap',
+    bootstrapConfirm
   ])
-  mod.controller 'HeaderCtrl', controllers.HeaderCtrl
-  mod.controller 'FooterCtrl', controllers.FooterCtrl
-  mod
+
+  mod.controller 'ClientsCtrl', controllers.ClientsCtrl
+  return mod

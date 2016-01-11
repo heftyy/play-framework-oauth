@@ -8,6 +8,7 @@ define [
   './services/playRoutes'
   './filters'
   './directives/example'
+  './modal_state'
 ], (angular) ->
   'use strict'
   angular.module 'oauthConsole.common', [
@@ -15,4 +16,5 @@ define [
     'common.playRoutes'
     'common.filters'
     'common.directives.example'
+    'common.modalState'
   ]

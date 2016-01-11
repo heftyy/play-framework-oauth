@@ -16,8 +16,12 @@ define [
     ($http, $q, playRoutes, $cookies, $log) ->
 
       return {
-        list: (json) ->
-          playRoutes.oauth.controllers.COAuthWS.getList(JSON.stringify(json)).get().then((response) ->
+        downloadFromWs: (wsId) ->
+          playRoutes.oauth.controllers.COAuthScope.downloadScopes(wsId).get().then((response) ->
+            return response.data
+          )
+        getForWs: (wsId) ->
+          playRoutes.oauth.controllers.COAuthScope.scopesForWS(wsId).get().then((response) ->
             return response.data
           )
       }
