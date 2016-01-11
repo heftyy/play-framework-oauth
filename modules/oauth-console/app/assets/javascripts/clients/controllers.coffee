@@ -15,10 +15,16 @@ define [], ->
     )
 
     $scope.gridOptions =
-      enableFiltering: false
+      enableFiltering: false,
+      enableRowSelection: true,
+      expandableRowTemplate: 'assets/javascripts/clients/client_details.html',
+      expandableRowHeight: 150,
       onRegisterApi: (gridApi) ->
         $scope.gridApi = gridApi
         gridApi.rowEdit.on.saveRow($scope, $scope.saveRow)
+        gridApi.expandable.on.rowExpandedStateChanged($scope, (row) ->
+
+        )
       columnDefs: [
         {field: 'id', enableCellEdit: false, width: 30, enableFiltering: false}
         {field: 'name', enableCellEdit: true}
@@ -28,10 +34,10 @@ define [], ->
         {field: 'creationTime', enableCellEdit: false}
         {
           width: 65
-          name: 'Scopes',
+          name: 'Details',
           enableCellEdit: false,
           enableFiltering: false,
-          cellTemplate: '<a href="#/client/scopes/{{ row.entity.id }}"><button class="btn btn-sm btn-info">Scopes</button></a>'
+          cellTemplate: '<a href="#/client/details/{{ row.entity.id }}"><button class="btn btn-sm btn-info">Scopes</button></a>'
         }
         {
           width: 65

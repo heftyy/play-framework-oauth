@@ -11,6 +11,11 @@ define [
     'clients.routes',
     'clients.services',
     'ui.bootstrap',
+    'ui.grid',
+    'ui.grid.edit',
+    'ui.grid.rowEdit',
+    'ui.grid.cellNav',
+    'ui.grid.expandable',
     bootstrapConfirm
   ])
 
