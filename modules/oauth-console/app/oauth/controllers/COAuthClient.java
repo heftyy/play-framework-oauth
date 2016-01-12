@@ -1,9 +1,13 @@
 package oauth.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Lists;
 import common.repository.Repository;
 import oauth.models.OAuthClient;
 import oauth.services.GenerateKeyService;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -68,6 +72,16 @@ public class COAuthClient extends Controller {
 
     @Transactional
     public Result getList(String json) {
-        return ok(Json.toJson((clientRepository.findAll())));
+        if(json == null) return ok(Json.toJson((clientRepository.findAll())));
+        JsonNode jn = Json.parse(json);
+
+        List<Criterion> restrictions = Lists.newArrayList();
+
+        if(jn.has("clientId")) {
+            Long clientId = jn.get("clientId").asLong(0);
+            if(clientId != 0) restrictions.add(Restrictions.eq("id", clientId));
+        }
+
+        return ok(Json.toJson(clientRepository.findWithRestrictions(restrictions)));
     }
 }

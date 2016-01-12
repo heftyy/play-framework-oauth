@@ -1,1 +1,13 @@
-<div>client details {{ row.entity.id }}</div>
+<uib-tabset>
+    <uib-tab heading="Client key">
+        <dl class="dl-horizontal">
+            <dt>Password</dt>
+            <dd>{{ row.entity.password }}</dd>
+            <dt>Private key</dt>
+            <dd><a href="{{ row.entity.keyUrl }}">Download</a></dd>
+        </dl>
+    </uib-tab>
+    <uib-tab heading="Webservice list">
+        <div ui-grid="row.entity.subGridOptions"></div>
+    </uib-tab>
+</uib-tabset>

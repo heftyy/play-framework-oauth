@@ -101,6 +101,7 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     public List<T> findWithRestrictions(List<?> restrictions, Map<String, JoinType> aliases) {
         Criteria criteria = getSession().createCriteria(type);
 
+        addRestrictions(criteria, restrictions);
         addAliases(criteria, aliases);
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -200,14 +201,18 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
     @Override
     public T findOneWithRestrictions(List<?> restrictions, String... aliases) {
         Criteria criteria = getSession().createCriteria(type);
-        restrictions.stream()
-                .filter(restriction -> restriction instanceof Criterion)
-                .forEach(restriction -> criteria.add((Criterion) restriction));
 
+        addRestrictions(criteria, restrictions);
         addAliases(criteria, aliases);
 
         Object result = criteria.uniqueResult();
         return result == null ? null : (T) result;
+    }
+
+    private void addRestrictions(Criteria criteria, List<?> restrictions) {
+        restrictions.stream()
+                .filter(restriction -> restriction instanceof Criterion)
+                .forEach(restriction -> criteria.add((Criterion) restriction));
     }
 
     private void addAliases(Criteria criteria, Map<String, JoinType> aliases) {
@@ -231,8 +236,8 @@ public class HibernateRepository<T extends AbstractModel> implements Repository<
             // eg. assignment.socket.devices
             if (alias.contains(".")) {
                 String rhs = alias.split("\\.")[1];
-                criteria.createAlias(alias, rhs);
-            } else criteria.createAlias(alias, alias);
+                criteria.createAlias(alias, rhs, JoinType.LEFT_OUTER_JOIN);
+            } else criteria.createAlias(alias, alias, JoinType.LEFT_OUTER_JOIN);
         });
     }
 }

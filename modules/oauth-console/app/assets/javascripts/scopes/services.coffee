@@ -24,6 +24,20 @@ define [
           playRoutes.oauth.controllers.COAuthScope.scopesForWS(wsId).get().then((response) ->
             return response.data
           )
+        getForWsAndClient: (wsId, clientId) ->
+          playRoutes.oauth.controllers.COAuthScope.scopesForWSAndClient(wsId, clientId).get().then((response) ->
+            return response.data
+          )
+        update: (scopeId, clientId, value) ->
+          json = {
+            scopeId: scopeId,
+            clientId: clientId,
+            value: value
+          }
+
+          playRoutes.oauth.controllers.COAuthScope.update().post(JSON.stringify(json)).then((response) ->
+            return response.data
+          )
       }
   ]
 

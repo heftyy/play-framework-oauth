@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <h4 class="modal-title">Access of {{client.name}} to {{ws.name}}</h4>
+</div>
+<div class="modal-body">
+    <div class="panel panel-default" ng-repeat="scope in scopes">
+        <div class="panel-heading">
+            <input type="checkbox" ng-model="scopeCheckboxes[scope.id]" ng-change="toggleCheckbox(scope.id)">
+            <b>{{scope.name}}</b>, {{scope.description}}
+        </div>
+        <div class="panel-body">
+            <p ng-repeat="urlPattern in scope.urlPatterns">
+                <span class="label label-primary">{{urlPattern.method}}</span> {{urlPattern.pattern}}
+            </p>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" type="button" ng-click="$dismiss()">Cancel</button>
+</div>

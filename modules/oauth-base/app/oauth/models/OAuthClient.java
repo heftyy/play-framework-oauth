@@ -4,6 +4,7 @@ import common.models.AbstractModel;
 import org.joda.time.DateTime;
 import play.db.jpa.JPA;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class OAuthClient extends AbstractModel {
@@ -15,6 +16,20 @@ public class OAuthClient extends AbstractModel {
 	private DateTime creationTime;
 	private Set<OAuthWS> webServices;
 	private Set<OAuthScope> scopes;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OAuthClient that = (OAuthClient) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(accessorId, that.accessorId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, accessorId);
+    }
 
     public Long getId() {
         return id;

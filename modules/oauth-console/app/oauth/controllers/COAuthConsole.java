@@ -17,7 +17,7 @@ import static org.reflections.ReflectionUtils.withReturnType;
 public class COAuthConsole extends Controller {
 
     public Result index() {
-        return ok(oauth.views.html.dashboard.render());
+        return ok(oauth.views.html.home.render());
     }
 
     public Result javascriptRoutes() throws IllegalAccessException, IllegalArgumentException,

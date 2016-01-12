@@ -30,7 +30,7 @@ define [], ->
           name: 'Scopes',
           enableCellEdit: false,
           enableFiltering: false,
-          cellTemplate: '<a href="#/ws/scopes/{{ row.entity.id }}"><button class="btn btn-sm btn-info">Scopes</button></a>'
+          cellTemplate: '<a href="#/ws/{{ row.entity.id }}/scopes"><button class="btn btn-sm btn-info">Scopes</button></a>'
         }
         {
           width: 65
