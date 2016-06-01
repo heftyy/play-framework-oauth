@@ -10,16 +10,23 @@ addons:
     
 services:
   - postgresql
+
+env:
+  - ACTIVATOR_VERSION=1.3.0 \
+    ACTIVATOR_ZIP_FILE=typesafe-activator-${ACTIVATOR_VERSION}-minimal.zip \
+    ACTIVATOR_ZIP_URL=http://downloads.typesafe.com/typesafe-activator/${ACTIVATOR_VERSION}/${ACTIVATOR_ZIP_FILE} \
+    ACTIVATOR_BIN=${TRAVIS_BUILD_DIR}/activator-${ACTIVATOR_VERSION}-minimal/activator
+    
+install:
+  - wget ${ACTIVATOR_ZIP_URL}
+  - unzip -q ${ACTIVATOR_ZIP_FILE}
   
 before_script:
   - psql -c 'create database oauth;' -U postgres
   - psql oauth -c 'create schema oauth;' -U postgres
 
 script:
-  - wget --secure-protocol=TLSv1 https://downloads.typesafe.com/typesafe-activator/1.3.10/typesafe-activator-1.3.10-minimal.zip
-  - unzip typesafe-activator-1.3.10-minimal.zip
-  - activator-1.3.10-minimal/activator compile
-  - activator-1.3.10-minimal/activator test
+  - "cd $TRAVIS_BUILD_DIR/code && ${ACTIVATOR_BIN} test"
 
 cache:
   directories:
