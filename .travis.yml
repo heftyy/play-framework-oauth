@@ -16,7 +16,7 @@ before_script:
   - psql frog -c 'create schema oauth;' -U postgres
 
 script:
-  - wget https://downloads.typesafe.com/typesafe-activator/1.3.10/typesafe-activator-1.3.10-minimal.zip
+  - wget --secure-protocol=TLSv1 https://downloads.typesafe.com/typesafe-activator/1.3.10/typesafe-activator-1.3.10-minimal.zip
   - unzip typesafe-activator-1.3.10-minimal.zip
   - activator-1.3.10-minimal/activator compile
   - activator-1.3.10-minimal/activator test
