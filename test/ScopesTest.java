@@ -1,12 +1,10 @@
-package oauth.ws;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.google.inject.Key;
 import common.json.JsonSetup;
-import oauth.helper.GuiceHelper;
+import helper.GuiceHelper;
 import oauth.lifecycle.OnWsStart;
 import oauth.models.OAuthScope;
 import oauth.modules.OAuthBaseModule;
@@ -52,7 +50,7 @@ public class ScopesTest {
         JsonSetup.setup();
 
         ScopesLoader scopesLoader = injector.instanceOf(ScopesLoader.class);
-        scopesLoader.load("test/scopes.json");
+        scopesLoader.load("test/test_scopes.json");
 
         ScopesContainer scopesContainer = injector.instanceOf(ScopesContainer.class);
 
@@ -77,7 +75,7 @@ public class ScopesTest {
     public void serializationTest() {
         JsonSetup.setup();
 
-        Set<OAuthScope> scopes = readScopesFile("test/scopes.json");
+        Set<OAuthScope> scopes = readScopesFile("test/test_scopes.json");
         assertTrue(scopes.size() == 1);
         assertTrue(scopes.iterator().next().getUrlPatterns().size() == 2);
     }

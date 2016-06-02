@@ -14,15 +14,14 @@
             <property name="hibernate.generate_statistics" value="true"/>
            	<!-- DEBUGE ONLY -->
             <property name="hibernate.hbm2ddl.auto" value="create"/>
-            <property name="hibernate.hbm2ddl.import_files" value="initial_data.sql"></property>
-            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.import_files" value="initial_data.sql"/>
+            <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="org.hibernate.FlushMode" value="manual"/>
             <property name="jadira.usertype.autoRegisterUserTypes" value="true"/>
             <property name="jadira.usertype.databaseZone" value="jvm"/>
             <property name="jadira.usertype.javaZone" value="jvm"/>
-
-	    </properties>
+        </properties>
 	</persistence-unit>
 
 </persistence>

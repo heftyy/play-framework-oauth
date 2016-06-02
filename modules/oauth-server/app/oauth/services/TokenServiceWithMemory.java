@@ -63,6 +63,10 @@ public class TokenServiceWithMemory implements TokenService {
     public boolean validateScopeRequest(String accessorId, String domain, String scopeRequested) {
         Set<String> scopes = scopesService.getPatternsFor(accessorId, domain);
 
+        if(scopes == null || scopes.size() == 0) {
+            play.Logger.error("Didn't find any scopes available for accessor %s on %s", accessorId, domain);
+        }
+
         for(String scope : scopes) {
             if(ScopesStringCompare.compareStringsRegex(scopeRequested, scope)) return true;
         }

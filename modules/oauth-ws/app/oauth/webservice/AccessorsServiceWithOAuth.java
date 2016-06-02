@@ -17,7 +17,15 @@ public class AccessorsServiceWithOAuth implements AccessorsService {
     @Override
     public Accessor validateToken(String token, String requestedScope) {
         WSValidateResponse response = sendValidateRequest(token, requestedScope);
-        if(response == null) return null;
+        if(response == null) {
+            play.Logger.error("Validating token has failed, validate request returned null");
+            return null;
+        }
+
+        if(!response.isTokenValid()) {
+            play.Logger.error("Validating token has failed, token was invalid");
+            return null;
+        }
 
         return getAccessor(response);
     }

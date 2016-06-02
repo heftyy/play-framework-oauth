@@ -5,8 +5,8 @@ version := "1.0-SNAPSHOT"
 scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
-  javaJdbc,
   cache,
+  javaJdbc,
   javaWs,
   "org.mockito" % "mockito-core" % "1.9.5" % "test"
 )

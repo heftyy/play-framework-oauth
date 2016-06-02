@@ -1,4 +1,4 @@
-package oauth.helper;
+package helper;
 
 import com.google.common.collect.Collections2;
 import com.google.inject.Binding;

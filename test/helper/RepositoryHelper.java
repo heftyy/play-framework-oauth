@@ -1,4 +1,4 @@
-package oauth.helper;
+package helper;
 
 import common.repository.Repository;
 import oauth.models.OAuthWS;

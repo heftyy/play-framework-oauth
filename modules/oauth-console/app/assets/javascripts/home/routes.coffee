@@ -12,11 +12,14 @@ define [
 
   mod.config [
     '$stateProvider'
-    ($stateProvider) ->
+    '$urlRouterProvider'
+    ($stateProvider, $urlRouterProvider) ->
       $stateProvider.state('home', {
         url: '/',
         templateUrl: 'assets/javascripts/home/home.html'
         controller: controllers.HomeCtrl
       })
+
+      $urlRouterProvider.otherwise('/')
   ]
   return mod
